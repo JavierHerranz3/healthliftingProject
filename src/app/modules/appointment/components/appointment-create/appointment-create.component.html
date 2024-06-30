@@ -1,0 +1,74 @@
+<div class="flex h-screen">
+  <!-- Left side with form -->
+  <div class="w-1/2 p-10 bg-white">
+    <mat-card class="h-full">
+      <mat-card-header>
+        <mat-card-title class="text-2xl font-bold mb-6">Crear Nueva Cita</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit($event)" class="space-y-4">
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Fecha</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="date" [matDatepickerFilter]="dateFilter">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Hora</mat-label>
+              <mat-select formControlName="time">
+                <mat-option *ngFor="let hour of hours" [value]="hour">
+                  {{ hour }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Atleta</mat-label>
+              <mat-select formControlName="athleteId">
+                <mat-option *ngFor="let athlete of athletes" [value]="athlete.id">
+                  {{ athlete.personalInformation.name }} {{ athlete.personalInformation.surname }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Entrenador</mat-label>
+              <mat-select formControlName="coachId">
+                <mat-option *ngFor="let coach of coaches" [value]="coach.id">
+                  {{ coach.personalInformation.name }} {{ coach.personalInformation.surname }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Tipo de Entrenamiento</mat-label>
+              <mat-select formControlName="trainningType">
+                <mat-option *ngFor="let type of trainingTypes" [value]="type">
+                  {{type}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <button mat-raised-button color="primary" type="submit" class="w-full">Crear Cita</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Right side with thank you message and logo -->
+  <div class="w-1/2 p-10 flex flex-col items-center justify-center bg-white relative">
+    <div class="relative text-center z-10 mb-8">
+      <h2 class="text-2xl font-bold mb-4">¡Gracias por llegar hasta aquí!</h2>
+      <p>Estamos encantados de ayudarte a crear tu cita.</p>
+    </div>
+    <div class="relative z-10 mt-8 flex justify-center w-full">
+      <img src="assets/logo.png" alt="Logo de la empresa" class="w-1/2 h-auto object-contain">
+    </div>
+  </div>
+</div>

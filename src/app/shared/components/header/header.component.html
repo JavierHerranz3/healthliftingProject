@@ -1,0 +1,24 @@
+<mat-toolbar color="primary" class="flex justify-between items-center">
+  <div class="flex items-center space-x-4">
+    <img src="assets/logo.png" alt="Logo" class="h-12">
+    <a routerLink="/" class="text-2xl text-white no-underline">Healthlifting Center</a>
+  </div>
+  <div class="flex justify-center space-x-10 flex-grow">
+    <button mat-button routerLink="/athletes">Atletas</button>
+    <button mat-button routerLink="/coaches">Entrenadores</button>
+    <button mat-button routerLink="/appointments">Citas</button>
+  </div>
+  <div class="flex items-center space-x-4">
+    <ng-container *ngIf="user; else registerButton">{{user.name}}</ng-container>
+    <ng-template #registerButton>
+      <a [routerLink]="'/auth/register'"><button mat-button>Register</button></a>
+    </ng-template>
+    <ng-container *ngIf="user; else loginButton">{{user.name}}</ng-container>
+    <ng-template #loginButton>
+      <a [routerLink]="'/auth/login'"><button mat-button>Login</button></a>
+    </ng-template>
+  </div>
+</mat-toolbar>
+
+
+

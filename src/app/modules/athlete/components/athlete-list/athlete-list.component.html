@@ -1,0 +1,59 @@
+<div class="flex flex-col items-center justify-start min-h-screen">
+  <div class="flex items-center space-x-4 mb-4">
+    <button mat-raised-button color="primary" routerLink="/athletes/create">Crear Atleta</button>
+    <button mat-raised-button color="primary" (click)="toggleSearch()">Buscar Atleta</button>
+    <button mat-raised-button color="primary" (click)="showTable()">Obtener Lista de Atletas</button>
+  </div>
+  <div *ngIf="isSearchVisible" class="w-full max-w-md">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Buscar Atleta</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Nombre o Apellido">
+    </mat-form-field>
+  </div>lin
+
+  <div *ngIf="isTableVisible" class="mat-elevation-z8 w-full max-w-4xl">
+    <table mat-table [dataSource]="dataSource" class="mat-table" matSort>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+        <td mat-cell *matCellDef="let athlete"> {{athlete.personalInformation.name}} </td>
+      </ng-container>
+
+      <!-- Surname Column -->
+      <ng-container matColumnDef="surname">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellidos </th>
+        <td mat-cell *matCellDef="let athlete"> {{athlete.personalInformation.surname}} </td>
+      </ng-container>
+
+      <!-- Age Column -->
+      <ng-container matColumnDef="age">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Edad </th>
+        <td mat-cell *matCellDef="let athlete"> {{athlete.age}} </td>
+      </ng-container>
+
+      <!-- Height Column -->
+      <ng-container matColumnDef="height">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Altura </th>
+        <td mat-cell *matCellDef="let athlete"> {{athlete.height}} </td>
+      </ng-container>
+
+      <!-- Document Type Column -->
+      <ng-container matColumnDef="documentType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo de Documento </th>
+        <td mat-cell *matCellDef="let athlete"> {{athlete.personalInformation.documentType}} </td>
+      </ng-container>
+
+      <!-- Document Column -->
+      <ng-container matColumnDef="document">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Documento </th>
+        <td mat-cell *matCellDef="let athlete"> {{athlete.personalInformation.document}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
