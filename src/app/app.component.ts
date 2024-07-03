@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
-import { AuthService } from './core/services/auth.service';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,15 +28,9 @@ import { SharedModule } from './shared/components/shared.module';
 export class AppComponent implements OnInit {
   title = 'healthliftingCenter';
 
-  constructor(private _authService: AuthService) {}
+  constructor() {}
   ngOnInit(): void {
-    this._checkAndSetUser();
-  }
-
-  private _checkAndSetUser() {
-    const user = localStorage.getItem('user');
-    if (user) {
-      this._authService.setUser(JSON.parse(user));
-    }
+    // Implementación del método ngOnInit
+    console.log('AppComponent initialized');
   }
 }

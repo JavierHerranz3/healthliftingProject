@@ -1,9 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { AthleteService } from '../../service/athlete.service';
+import { AthleteService, Page } from '../../service/athlete.service';
 import { Athlete } from '../../../../core/models/athlete.model';
 
 @Component({
@@ -11,7 +9,7 @@ import { Athlete } from '../../../../core/models/athlete.model';
   templateUrl: './athlete-list.component.html',
   styleUrls: ['./athlete-list.component.css'],
 })
-export class AthleteListComponent implements OnInit {
+export class AthleteListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'name',
     'surname',
@@ -21,34 +19,31 @@ export class AthleteListComponent implements OnInit {
     'document',
   ];
   dataSource = new MatTableDataSource<Athlete>();
-  searchControl = new FormControl('');
-  filteredDataSource = new MatTableDataSource<Athlete>();
+  totalElements = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private athleteService: AthleteService) {}
 
   ngOnInit(): void {
-    this.getAthletes();
-    this.searchControl.valueChanges.subscribe((value) =>
-      this.applyFilter(value || '')
+    this.loadAthletes(0, 10); // Cargar la primera página con tamaño 10 por defecto
+  }
+
+  ngAfterViewInit(): void {
+    this.paginator.page.subscribe(() =>
+      this.loadAthletes(this.paginator.pageIndex, this.paginator.pageSize)
     );
   }
 
-  getAthletes(): void {
-    this.athleteService.getAthletes().subscribe((athletes: Athlete[]) => {
-      this.dataSource.data = athletes;
-      this.filteredDataSource.data = athletes;
-      this.filteredDataSource.paginator = this.paginator;
-      this.filteredDataSource.sort = this.sort;
+  loadAthletes(page: number, size: number): void {
+    this.athleteService.getAthletes(page, size).subscribe({
+      next: (pageData: Page<Athlete>) => {
+        this.dataSource.data = pageData.content;
+        this.totalElements = pageData.totalElements;
+      },
+      error: (error) => {
+        console.error('Error fetching athletes:', error);
+      },
     });
-  }
-
-  applyFilter(filterValue: string): void {
-    this.filteredDataSource.filter = filterValue.trim().toLowerCase();
-    if (this.filteredDataSource.paginator) {
-      this.filteredDataSource.paginator.firstPage();
-    }
   }
 }

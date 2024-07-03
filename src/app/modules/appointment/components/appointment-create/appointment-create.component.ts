@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 
 import { Router } from '@angular/router';
-import { AthleteService } from '../../../athlete/service/athlete.service';
+import { AthleteService, Page } from '../../../athlete/service/athlete.service';
 import { CoachService } from '../../../coach/service/coach.service';
 import { Athlete } from '../../../../core/models/athlete.model';
 import { Coach } from '../../../../core/models/coach.model';
@@ -83,8 +83,13 @@ export class AppointmentCreateComponent implements OnInit {
   }
 
   loadAthletes(): void {
-    this.athleteService.getAthletes().subscribe((athletes: Athlete[]) => {
-      this.athletes = athletes;
+    this.athleteService.getAthletes(0, 10).subscribe({
+      next: (pageData: Page<Athlete>) => {
+        this.athletes = pageData.content;
+      },
+      error: (error) => {
+        console.error('Error fetching athletes:', error);
+      },
     });
   }
 

@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../../core/services/auth.service';
-import { User } from '../../../core/models/login.model';
-import {MatToolbarModule} from '@angular/material/toolbar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -11,15 +9,11 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [MatToolbarModule, MatButtonModule, CommonModule, RouterLink],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrl: './header.component.css',
 })
-export class HeaderComponent implements OnInit{
-  protected user: User | null;
-
-  constructor(private _authService: AuthService){
-    this.user = null;
-  }
+export class HeaderComponent implements OnInit {
   ngOnInit(): void {
-    this._authService.User.subscribe((user: User | null) => (this.user = user));
+    // Implementación del método ngOnInit
+    console.log('HeaderComponent initialized');
   }
 }

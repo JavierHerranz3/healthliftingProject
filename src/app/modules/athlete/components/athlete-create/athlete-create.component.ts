@@ -39,7 +39,7 @@ export class AthleteCreateComponent implements OnInit {
     if (this.athleteForm.valid) {
       const formValues = this.athleteForm.value;
       const newAthlete = {
-        personalInfo: {
+        personalInformation: {
           name: formValues.name,
           surname: formValues.surname,
           documentType: formValues.documentType,
@@ -62,8 +62,8 @@ export class AthleteCreateComponent implements OnInit {
           duration: 4000,
         });
         setTimeout(() => {
-          this._router.navigate(['/athlete/list']);
-        }, 4000);
+          this._router.navigate(['/athletes/list']);
+        }, 2000);
       },
       error: (error) => {
         console.error('Error al crear al Atleta:', error);
