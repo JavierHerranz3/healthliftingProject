@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AthleteRoutingModule } from './athlete-routing.module';
-
-import { AthleteCreateComponent } from './components/athlete-create/athlete-create.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -14,6 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AthleteDetailComponent } from './pages/athlete-detail/athlete-detail.component';
 import { AthleteListComponent } from './pages/athlete-list/athlete-list.component';
+import { AthleteCreateComponent } from './components/athlete-create/athlete-create.component';
 
 @NgModule({
   declarations: [

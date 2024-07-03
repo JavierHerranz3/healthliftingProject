@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
 import { Router } from '@angular/router';
-
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CoachService } from '../service/coach.service';
+import { DocumentType } from '../../../core/models/coach.model';
 
 @Component({
   selector: 'app-coach-create',
@@ -62,7 +61,7 @@ export class CoachCreateComponent implements OnInit {
           this._router.navigate(['/coach/list']);
         }, 4000);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error al crear al Entrenador:', error);
       },
     });

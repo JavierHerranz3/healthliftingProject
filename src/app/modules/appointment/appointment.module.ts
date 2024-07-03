@@ -8,10 +8,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
+import { AppointmentListComponent } from './pages/appointment-list/appointment-list.component';
 import { AppointmentCreateComponent } from './components/appointment-create/appointment-create.component';
-import { AppointmentDetailComponent } from './components/appointment-detail/appointment-detail.component';
-import { AppointmentPageComponent } from './pages/appointment-page/appointment-page.component';
+import { AppointmentDetailComponent } from './pages/appointment-detail/appointment-detail.component';
 import { AppointmentRoutingModule } from './appointment-routing.module';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -21,7 +20,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     AppointmentListComponent,
     AppointmentCreateComponent,
     AppointmentDetailComponent,
-    AppointmentPageComponent
   ],
   imports: [
     CommonModule,
@@ -35,7 +33,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatPaginatorModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    AppointmentRoutingModule
-  ]
+    AppointmentRoutingModule,
+  ],
 })
-export class AppointmentsModule { }
+export class AppointmentsModule {}
