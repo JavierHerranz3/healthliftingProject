@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { apiUrl } from '../../../enviroment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
 import { Athlete } from '../../../core/models/athlete.model';
 
 @Injectable({
@@ -17,8 +16,9 @@ export class AthleteService {
     return this._http.get<Athlete[]>(this._apiUrl);
   }
 
-  getAthlete(id: number): Observable<Athlete> {
-    return this._http.get<Athlete>('${this._apiUrl}/${id}');
+  getAthlete(AthleteId: number): Observable<Athlete> {
+    const url = `${this._apiUrl}/athletes/${AthleteId}`;
+    return this._http.get<Athlete>(url);
   }
   getAthletesByNameAndSurname(
     name: string,

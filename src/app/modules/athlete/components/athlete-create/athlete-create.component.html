@@ -1,12 +1,12 @@
 <div class="flex h-screen">
-  <!-- Left side with form -->
+  <!-- Lado izquierdo con el formulario -->
   <div class="w-1/2 p-10 bg-white">
     <mat-card class="h-full">
       <mat-card-header>
         <mat-card-title class="text-2xl font-bold mb-6">Crear Nuevo Atleta</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <form [formGroup]="athleteForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <form [formGroup]="athleteForm" (ngSubmit)="submitForm()" class="space-y-4">
           <div>
             <mat-form-field appearance="fill" class="w-full">
               <mat-label>Nombre</mat-label>
@@ -34,9 +34,9 @@
           <div>
             <mat-form-field appearance="fill" class="w-full">
               <mat-label>Tipo de Documento</mat-label>
-              <mat-select formControlName="DocumentType">
+              <mat-select formControlName="documentType">
                 <mat-option *ngFor="let type of documentTypes" [value]="type">
-                  {{ type }}
+                  {{type}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -53,7 +53,7 @@
     </mat-card>
   </div>
 
-  <!-- Right side with thank you message and logo -->
+  <!-- Lado derecho con mensaje de agradecimiento y logo -->
   <div class="w-1/2 p-10 flex flex-col items-center justify-center bg-white relative">
     <div class="relative text-center z-10 mb-8">
       <h2 class="text-2xl font-bold mb-4">¡Gracias por llegar hasta aquí!</h2>

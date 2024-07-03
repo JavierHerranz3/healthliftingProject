@@ -1,72 +1,69 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AthleteService } from '../../service/athlete.service';
+
 import { Router } from '@angular/router';
-import { DocumentType } from '../../../../core/models/athlete.model';
+
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CoachService } from '../service/coach.service';
 
 @Component({
-  selector: 'app-athlete-create',
-  templateUrl: './athlete-create.component.html',
-  styleUrls: ['./athlete-create.component.css'],
+  selector: 'app-coach-create',
+  templateUrl: './coach-create.component.html',
+  styleUrls: ['./coach-create.component.css'],
 })
-export class AthleteCreateComponent implements OnInit {
-  athleteForm!: FormGroup;
+export class CoachCreateComponent implements OnInit {
+  coachForm!: FormGroup;
   documentTypes: string[] = Object.values(DocumentType);
   inputMessage: string = '';
 
   constructor(
     private _fb: FormBuilder,
-    private _athleteService: AthleteService,
+    private _coachService: CoachService,
     private _router: Router,
     private _snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
-    this.athleteForm = this._fb.group({
+    this.coachForm = this._fb.group({
       name: ['', Validators.required],
       surname: ['', Validators.required],
       documentType: ['', Validators.required],
       document: ['', Validators.required],
-      age: ['', Validators.required],
-      height: ['', Validators.required],
       idAppointments: [[]],
       idTrainingSheet: [[]],
     });
   }
 
   submitForm(): void {
-    if (this.athleteForm.valid) {
-      const formValues = this.athleteForm.value;
-      const newAthlete = {
-        personalInfo: {
+    if (this.coachForm.valid) {
+      const formValues = this.coachForm.value;
+      const newCoach = {
+        personalInformation: {
           name: formValues.name,
           surname: formValues.surname,
           documentType: formValues.documentType,
           document: formValues.document,
         },
-        age: formValues.age,
-        height: formValues.height,
-        appointmentId: [],
-        medicalRecordId: [],
+        idAppointments: [],
+        idTrainingSheet: [],
       };
-      this.createAthlete(newAthlete);
+      this.createCoach(newCoach);
     }
   }
 
-  private createAthlete(newAthlete: any): void {
-    this._athleteService.createAthlete(newAthlete).subscribe({
+  private createCoach(newCoach: any): void {
+    this._coachService.createCoach(newCoach).subscribe({
       next: (value: any) => {
-        this.inputMessage = 'Atleta creado exitosamente';
+        this.inputMessage = 'Entrenador creado exitosamente';
         this._snackBar.open(this.inputMessage, 'Cerrar', {
           duration: 4000,
         });
         setTimeout(() => {
-          this._router.navigate(['/athlete/list']);
+          this._router.navigate(['/coach/list']);
         }, 4000);
       },
       error: (error) => {
-        console.error('Error al crear al Atleta:', error);
+        console.error('Error al crear al Entrenador:', error);
       },
     });
   }

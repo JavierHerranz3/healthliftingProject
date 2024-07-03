@@ -3,36 +3,43 @@ import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { CoachService } from '../../service/coach.service';
-import { Coach } from '../../../../core/models/coach.model';
+import { AthleteService } from '../../service/athlete.service';
+import { Athlete } from '../../../../core/models/athlete.model';
 
 @Component({
-  selector: 'app-coach-list',
-  templateUrl: './coach-list.component.html',
-  styleUrls: ['./coach-list.component.css'],
+  selector: 'app-athlete-list',
+  templateUrl: './athlete-list.component.html',
+  styleUrls: ['./athlete-list.component.css'],
 })
-export class CoachListComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'surname', 'documentType', 'document'];
-  dataSource = new MatTableDataSource<Coach>();
+export class AthleteListComponent implements OnInit {
+  displayedColumns: string[] = [
+    'name',
+    'surname',
+    'age',
+    'height',
+    'documentType',
+    'document',
+  ];
+  dataSource = new MatTableDataSource<Athlete>();
   searchControl = new FormControl('');
-  filteredDataSource = new MatTableDataSource<Coach>();
+  filteredDataSource = new MatTableDataSource<Athlete>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private coachService: CoachService) {}
+  constructor(private athleteService: AthleteService) {}
 
   ngOnInit(): void {
-    this.getCoaches();
+    this.getAthletes();
     this.searchControl.valueChanges.subscribe((value) =>
       this.applyFilter(value || '')
     );
   }
 
-  getCoaches(): void {
-    this.coachService.getCoaches().subscribe((coaches: Coach[]) => {
-      this.dataSource.data = coaches;
-      this.filteredDataSource.data = coaches;
+  getAthletes(): void {
+    this.athleteService.getAthletes().subscribe((athletes: Athlete[]) => {
+      this.dataSource.data = athletes;
+      this.filteredDataSource.data = athletes;
       this.filteredDataSource.paginator = this.paginator;
       this.filteredDataSource.sort = this.sort;
     });

@@ -1,18 +1,13 @@
 <div class="flex flex-col items-center justify-start min-h-screen">
   <div class="flex items-center space-x-4 mb-4">
-    <button mat-raised-button color="primary" routerLink="/athletes/create">Crear Atleta</button>
-    <button mat-raised-button color="primary" (click)="toggleSearch()">Buscar Atleta</button>
-    <button mat-raised-button color="primary" (click)="showTable()">Obtener Lista de Atletas</button>
-  </div>
-  <div *ngIf="isSearchVisible" class="w-full max-w-md">
-    <mat-form-field appearance="fill" class="w-full">
+    <mat-form-field appearance="fill" class="w-full max-w-md">
       <mat-label>Buscar Atleta</mat-label>
       <input matInput [formControl]="searchControl" placeholder="Nombre o Apellido">
     </mat-form-field>
-  </div>lin
+  </div>
 
-  <div *ngIf="isTableVisible" class="mat-elevation-z8 w-full max-w-4xl">
-    <table mat-table [dataSource]="dataSource" class="mat-table" matSort>
+  <div class="mat-elevation-z8 w-full max-w-4xl">
+    <table mat-table [dataSource]="filteredDataSource" class="mat-table" matSort>
 
       <!-- Name Column -->
       <ng-container matColumnDef="name">

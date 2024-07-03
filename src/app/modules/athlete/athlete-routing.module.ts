@@ -1,14 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AthleteListComponent } from './components/athlete-list/athlete-list.component';
-import { AthleteDetailComponent } from './components/athlete-detail/athlete-detail.component';
+import { AthleteListComponent } from './pages/athlete-list/athlete-list.component';
+import { AthleteDetailComponent } from './pages/athlete-detail/athlete-detail.component';
 import { AthleteCreateComponent } from './components/athlete-create/athlete-create.component';
-import { AthletePageComponent } from './pages/athlete-page/athlete-page.component';
-
 const routes: Routes = [
-  { path: '', component: AthletePageComponent },
+  { path: '', redirectTo: 'list', pathMatch: 'full' },
   { path: 'list', component: AthleteListComponent },
-  { path: 'create', component: AthleteCreateComponent },
+  { path: 'create-athlete', component: AthleteCreateComponent },
   { path: 'detail/:id', component: AthleteDetailComponent },
 ];
 

@@ -6,14 +6,14 @@ import { AppointmentCreateComponent } from './components/appointment-create/appo
 import { AppointmentPageComponent } from './pages/appointment-page/appointment-page.component';
 
 const routes: Routes = [
-  { path: '', component: AppointmentPageComponent},
-  { path: 'create', component: AppointmentCreateComponent },
-  { path: 'detail', component: AppointmentDetailComponent},
-  { path: 'list', component: AppointmentListComponent }
+  { path: '', component: AppointmentPageComponent },
+  { path: 'create-appointment', component: AppointmentCreateComponent },
+  { path: 'detail/:id', component: AppointmentDetailComponent },
+  { path: 'list', component: AppointmentListComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppointmentRoutingModule { }
+export class AppointmentRoutingModule {}
