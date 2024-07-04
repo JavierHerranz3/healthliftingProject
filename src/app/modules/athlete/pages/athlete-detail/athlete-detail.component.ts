@@ -6,6 +6,8 @@ import { Athlete } from '../../../../core/models/athlete.model';
 import { Appointment } from '../../../../core/models/appointment.model';
 import { AthleteService } from '../../service/athlete.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-athlete-detail',
@@ -34,7 +36,8 @@ export class AthleteDetailComponent implements OnInit {
     private _athleteService: AthleteService,
     private _route: ActivatedRoute,
     private _routerNav: Router,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -72,16 +75,14 @@ export class AthleteDetailComponent implements OnInit {
   }
 
   confirmDelete(): void {
-    const snackBarRef = this._snackBar.open(
-      '¿Está seguro que desea eliminar al atleta?',
-      'Confirmar',
-      {
-        duration: 5000,
-      }
-    );
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '250px',
+    });
 
-    snackBarRef.onAction().subscribe(() => {
-      this.deleteAthlete();
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteAthlete();
+      }
     });
   }
 

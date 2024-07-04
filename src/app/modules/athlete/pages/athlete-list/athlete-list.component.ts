@@ -3,6 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { AthleteService, Page } from '../../service/athlete.service';
 import { Athlete } from '../../../../core/models/athlete.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-athlete-list',
@@ -23,12 +24,11 @@ export class AthleteListComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private athleteService: AthleteService) {}
+  constructor(private athleteService: AthleteService, private router: Router) {}
 
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    // Mover la llamada a loadAthletes() aquí y suscribir al paginator
     this.paginator.page.subscribe(() => this.loadAthletes());
     this.loadAthletes();
   }
@@ -41,11 +41,28 @@ export class AthleteListComponent implements OnInit, AfterViewInit {
       next: (pageData: Page<Athlete>) => {
         this.dataSource.data = pageData.content;
         this.totalElements = pageData.totalElements;
-        this.paginator.length = this.totalElements; // Asegurarse de que el paginador tenga la longitud correcta
+        this.paginator.length = this.totalElements;
       },
       error: (error) => {
         console.error('Error fetching athletes:', error);
       },
     });
+  }
+
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value
+      .trim()
+      .toLowerCase();
+    this.dataSource.filter = filterValue;
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  goToDetail(athlete: Athlete): void {
+    if (athlete && athlete.id) {
+      this.router.navigate([`/athlete/detail/${athlete.id}`]);
+    }
   }
 }

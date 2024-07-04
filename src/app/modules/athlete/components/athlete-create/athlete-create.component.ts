@@ -61,15 +61,15 @@ export class AthleteCreateComponent implements OnInit {
     this._athleteService.createAthlete(newAthlete).subscribe({
       next: (createdAthlete: Athlete) => {
         console.log(createdAthlete);
-        if (createdAthlete && createdAthlete.id) {
-          this.inputMessage = 'Atleta creado';
+        // if (createdAthlete && createdAthlete.id) {
+        //   this.inputMessage = 'Atleta creado';
 
-          // quitas el estado de carga
-          console.log(createdAthlete);
-          this._router.navigate(['/athletes/detail', createdAthlete.id]); // Redirigir a la página de detalles del atleta
-        } else {
-          console.error('El objeto creado no tiene un ID:', createdAthlete);
-        }
+        //   // quitas el estado de carga
+        //   console.log(createdAthlete);
+        //   this._router.navigate(['/athletes/detail', createdAthlete.id]); // Redirigir a la página de detalles del atleta
+        // } else {
+        //   console.error('El objeto creado no tiene un ID:', createdAthlete);
+        // }
       },
       error: (error) => {
         console.error('Error al crear al Atleta:', error);

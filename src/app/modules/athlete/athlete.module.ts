@@ -13,12 +13,15 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { AthleteDetailComponent } from './pages/athlete-detail/athlete-detail.component';
 import { AthleteListComponent } from './pages/athlete-list/athlete-list.component';
 import { AthleteCreateComponent } from './components/athlete-create/athlete-create.component';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
     AthleteDetailComponent,
     AthleteListComponent,
     AthleteCreateComponent,
+    ConfirmDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -32,6 +35,7 @@ import { AthleteCreateComponent } from './components/athlete-create/athlete-crea
     MatPaginatorModule,
     MatTableModule,
     MatToolbarModule,
+    MatDialogModule,
   ],
 })
 export class AthleteModule {}

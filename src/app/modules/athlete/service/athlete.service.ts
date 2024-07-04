@@ -18,6 +18,12 @@ export class AthleteService {
     return this._http.get<Page<Athlete>>(this._apiUrl, { params });
   }
 
+  searchAthletesByDocument(document: string): Observable<Athlete[]> {
+    return this._http.get<Athlete[]>(
+      `${this._apiUrl}/search?document=${document}`
+    );
+  }
+
   getAthleteById(id: string): Observable<Athlete> {
     return this._http.get<Athlete>(`${this._apiUrl}/${id}`);
   }
