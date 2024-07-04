@@ -15,45 +15,36 @@
     <div class="appointments">
       <h2>Citas del Atleta</h2>
       <table mat-table [dataSource]="appointmentsDataSource" class="mat-elevation-z8">
-  
+        
         <!-- ID Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef> ID </th>
           <td mat-cell *matCellDef="let appointment"> {{appointment.id}} </td>
         </ng-container>
-  
+        
         <!-- Date Column -->
         <ng-container matColumnDef="date">
           <th mat-header-cell *matHeaderCellDef> Fecha </th>
           <td mat-cell *matCellDef="let appointment"> {{appointment.date | date}} </td>
         </ng-container>
-  
+        
         <!-- Coach Name Column -->
         <ng-container matColumnDef="coachName">
           <th mat-header-cell *matHeaderCellDef> Entrenador </th>
           <td mat-cell *matCellDef="let appointment"> {{appointment.coachName}} </td>
         </ng-container>
-  
+        
         <!-- Coach Surname Column -->
         <ng-container matColumnDef="coachSurname">
           <th mat-header-cell *matHeaderCellDef> Apellido del Entrenador </th>
           <td mat-cell *matCellDef="let appointment"> {{appointment.coachSurname}} </td>
         </ng-container>
-  
+        
         <!-- Training Type Column -->
         <ng-container matColumnDef="trainingType">
           <th mat-header-cell *matHeaderCellDef> Tipo de Entrenamiento </th>
           <td mat-cell *matCellDef="let appointment"> {{appointment.trainingType}} </td>
         </ng-container>
-  
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef> Acciones </th>
-          <td mat-cell *matCellDef="let appointment">
-            <!-- Aquí puedes agregar botones para editar o eliminar citas -->
-          </td>
-        </ng-container>
-  
         <tr mat-header-row *matHeaderRowDef="appointmentDisplayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: appointmentDisplayedColumns;"></tr>
       </table>

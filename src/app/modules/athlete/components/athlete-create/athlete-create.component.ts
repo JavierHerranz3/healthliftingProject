@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AthleteService } from '../../service/athlete.service';
 import { Router } from '@angular/router';
-import { DocumentType } from '../../../../core/models/athlete.model';
+import { Athlete, DocumentType } from '../../../../core/models/athlete.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-athlete-create',
@@ -19,7 +20,8 @@ export class AthleteCreateComponent implements OnInit {
     private _fb: FormBuilder,
     private _athleteService: AthleteService,
     private _router: Router,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private _dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -47,23 +49,27 @@ export class AthleteCreateComponent implements OnInit {
         },
         age: formValues.age,
         height: formValues.height,
-        appointmentId: [],
-        medicalRecordId: [],
+        idAppointments: [],
+        idTrainingSheet: [],
       };
       this.createAthlete(newAthlete);
     }
   }
 
   private createAthlete(newAthlete: any): void {
+    //mostrar estado de carga
     this._athleteService.createAthlete(newAthlete).subscribe({
-      next: (value: any) => {
-        this.inputMessage = 'Atleta creado exitosamente';
-        this._snackBar.open(this.inputMessage, 'Cerrar', {
-          duration: 4000,
-        });
-        setTimeout(() => {
-          this._router.navigate(['/athletes/list']);
-        }, 2000);
+      next: (createdAthlete: Athlete) => {
+        console.log(createdAthlete);
+        if (createdAthlete && createdAthlete.id) {
+          this.inputMessage = 'Atleta creado';
+
+          // quitas el estado de carga
+          console.log(createdAthlete);
+          this._router.navigate(['/athletes/detail', createdAthlete.id]); // Redirigir a la página de detalles del atleta
+        } else {
+          console.error('El objeto creado no tiene un ID:', createdAthlete);
+        }
       },
       error: (error) => {
         console.error('Error al crear al Atleta:', error);

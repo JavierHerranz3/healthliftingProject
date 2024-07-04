@@ -25,21 +25,23 @@ export class AthleteListComponent implements OnInit, AfterViewInit {
 
   constructor(private athleteService: AthleteService) {}
 
-  ngOnInit(): void {
-    this.loadAthletes(0, 10); // Cargar la primera página con tamaño 10 por defecto
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    this.paginator.page.subscribe(() =>
-      this.loadAthletes(this.paginator.pageIndex, this.paginator.pageSize)
-    );
+    // Mover la llamada a loadAthletes() aquí y suscribir al paginator
+    this.paginator.page.subscribe(() => this.loadAthletes());
+    this.loadAthletes();
   }
 
-  loadAthletes(page: number, size: number): void {
-    this.athleteService.getAthletes(page, size).subscribe({
+  loadAthletes(): void {
+    const pageIndex = this.paginator?.pageIndex ?? 0;
+    const pageSize = this.paginator?.pageSize ?? 5;
+
+    this.athleteService.getAthletes(pageIndex, pageSize).subscribe({
       next: (pageData: Page<Athlete>) => {
         this.dataSource.data = pageData.content;
         this.totalElements = pageData.totalElements;
+        this.paginator.length = this.totalElements; // Asegurarse de que el paginador tenga la longitud correcta
       },
       error: (error) => {
         console.error('Error fetching athletes:', error);

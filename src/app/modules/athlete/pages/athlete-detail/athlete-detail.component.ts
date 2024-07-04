@@ -16,6 +16,7 @@ export class AthleteDetailComponent implements OnInit {
   protected athlete: Athlete | undefined;
   protected dataSource = new MatTableDataSource<Athlete>();
   protected appointmentsDataSource = new MatTableDataSource<Appointment>(); // DataSource para las citas
+  protected page?: { content: Athlete[]; totalElements: number };
   protected displayedColumns: string[] = ['id', 'name', 'surname', 'document'];
   protected appointmentDisplayedColumns: string[] = [
     'id',
@@ -38,6 +39,7 @@ export class AthleteDetailComponent implements OnInit {
     this._route.params.subscribe((params) => {
       this.id = params['id']; // Obtén el ID del atleta de los parámetros de la URL
       this.getAthleteById(this.id);
+      this.getAppointmentsByAthleteId(this.id);
       this.dataSource.paginator = this.paginator;
     });
   }
@@ -50,6 +52,19 @@ export class AthleteDetailComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error fetching athlete', err);
+      },
+    });
+  }
+
+  getAppointmentsByAthleteId(athleteId: string): void {
+    this._athleteService.getAppointmentsByAthleteId(athleteId).subscribe({
+      next: (appointments) => {
+        this.appointmentsDataSource.data = appointments;
+        this.activeAppointmentsCount = appointments.length;
+        console.log('Appointments fetched', appointments);
+      },
+      error: (err) => {
+        console.error('Error fetching appointments', err);
       },
     });
   }
