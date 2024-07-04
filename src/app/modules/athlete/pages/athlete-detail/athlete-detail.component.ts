@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Athlete } from '../../../../core/models/athlete.model';
 import { Appointment } from '../../../../core/models/appointment.model';
 import { AthleteService } from '../../service/athlete.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-athlete-detail',
@@ -32,7 +33,8 @@ export class AthleteDetailComponent implements OnInit {
   constructor(
     private _athleteService: AthleteService,
     private _route: ActivatedRoute,
-    private _routerNav: Router
+    private _routerNav: Router,
+    private _snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -69,15 +71,34 @@ export class AthleteDetailComponent implements OnInit {
     });
   }
 
+  confirmDelete(): void {
+    const snackBarRef = this._snackBar.open(
+      '¿Está seguro que desea eliminar al atleta?',
+      'Confirmar',
+      {
+        duration: 5000,
+      }
+    );
+
+    snackBarRef.onAction().subscribe(() => {
+      this.deleteAthlete();
+    });
+  }
+
   deleteAthlete(): void {
     this._athleteService.deleteAthlete(this.id).subscribe({
       next: () => {
         console.log('Athlete deleted successfully');
-        this._routerNav.navigate(['/athletes/list']);
+        this._routerNav.navigate(['']);
       },
       error: (error) => {
         console.error('Error deleting athlete', error);
       },
     });
+  }
+
+  modifyAthlete(): void {
+    // Navega a la página de edición del atleta
+    this._routerNav.navigate(['/athletes/modify', this.id]);
   }
 }

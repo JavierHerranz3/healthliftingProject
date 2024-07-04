@@ -1,8 +1,15 @@
-<div class="flex justify-center items-center space-x-4 mb-10">
-  <ng-container ><app-athlete-creation-container (click)="navigateToCreateAthlete()">
-  </app-athlete-creation-container></ng-container>
-    
+<div class="flex items-center space-x-4 p-4 bg-gray-100">
+  <ng-container *ngIf="showAthleteButton">
+    <app-athlete-creation-container (click)="navigateToCreateAthlete()">
+    </app-athlete-creation-container>
+  </ng-container>
+  
+  <ng-container *ngIf="showCoachButton">
     <app-coach-creation-container (click)="navigateToCreateCoach()"></app-coach-creation-container>
+  </ng-container>
+  
+  <ng-container *ngIf="showAppointmentButton">
     <app-appointment-creation-container (click)="navigateToCreateAppointment()">
     </app-appointment-creation-container>
-  </div>
+  </ng-container>
+</div>

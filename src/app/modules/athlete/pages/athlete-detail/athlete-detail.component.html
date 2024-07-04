@@ -1,53 +1,43 @@
-<div class="container">
-    <div class="athlete-details">
-      <h2>Detalle del Atleta</h2>
-      <div *ngIf="athlete">
-        <p><strong>Nombre:</strong> {{ athlete.personalInformation.name }}</p>
-        <p><strong>Apellido:</strong> {{ athlete.personalInformation.surname }}</p>
-        <p><strong>Documento:</strong> {{ athlete.personalInformation.document }}</p>
-        <p><strong>Tipo de Documento:</strong> {{ athlete.personalInformation.documentType }}</p>
-        <p><strong>Edad:</strong> {{ athlete.age }}</p>
-        <p><strong>Altura:</strong> {{ athlete.height }}</p>
-      </div>
-      <button mat-button color="warn" (click)="deleteAthlete()">Eliminar Atleta</button>
-    </div>
+<div class="container mx-auto p-4">
+  <div class="flex justify-end mb-4">
+    <button class="bg-blue-500 text-white px-4 py-2 rounded mr-2" (click)="modifyAthlete()">Modificar Atleta</button>
+    <button class="bg-red-500 text-white px-4 py-2 rounded" (click)="confirmDelete()">Eliminar Atleta</button>
+  </div>
   
-    <div class="appointments">
-      <h2>Citas del Atleta</h2>
-      <table mat-table [dataSource]="appointmentsDataSource" class="mat-elevation-z8">
-        
-        <!-- ID Column -->
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef> ID </th>
-          <td mat-cell *matCellDef="let appointment"> {{appointment.id}} </td>
-        </ng-container>
-        
-        <!-- Date Column -->
-        <ng-container matColumnDef="date">
-          <th mat-header-cell *matHeaderCellDef> Fecha </th>
-          <td mat-cell *matCellDef="let appointment"> {{appointment.date | date}} </td>
-        </ng-container>
-        
-        <!-- Coach Name Column -->
-        <ng-container matColumnDef="coachName">
-          <th mat-header-cell *matHeaderCellDef> Entrenador </th>
-          <td mat-cell *matCellDef="let appointment"> {{appointment.coachName}} </td>
-        </ng-container>
-        
-        <!-- Coach Surname Column -->
-        <ng-container matColumnDef="coachSurname">
-          <th mat-header-cell *matHeaderCellDef> Apellido del Entrenador </th>
-          <td mat-cell *matCellDef="let appointment"> {{appointment.coachSurname}} </td>
-        </ng-container>
-        
-        <!-- Training Type Column -->
-        <ng-container matColumnDef="trainingType">
-          <th mat-header-cell *matHeaderCellDef> Tipo de Entrenamiento </th>
-          <td mat-cell *matCellDef="let appointment"> {{appointment.trainingType}} </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="appointmentDisplayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: appointmentDisplayedColumns;"></tr>
-      </table>
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  <div class="bg-white p-6 rounded-lg shadow-md athlete-details">
+    <h2 class="text-xl font-bold mb-4">Detalle del Atleta</h2>
+    <div *ngIf="athlete">
+      <p><strong>Nombre:</strong> {{ athlete.personalInformation.name }}</p>
+      <p><strong>Apellido:</strong> {{ athlete.personalInformation.surname }}</p>
+      <p><strong>Documento:</strong> {{ athlete.personalInformation.document }}</p>
+      <p><strong>Tipo de Documento:</strong> {{ athlete.personalInformation.documentType }}</p>
+      <p><strong>Edad:</strong> {{ athlete.age }}</p>
+      <p><strong>Altura:</strong> {{ athlete.height }}</p>
     </div>
   </div>
+
+  <div class="mt-6 appointments">
+    <h2 class="text-xl font-bold mb-4">Citas del Atleta</h2>
+    <table class="min-w-full bg-white mat-elevation-z8">
+      <thead>
+        <tr>
+          <th class="px-4 py-2">ID</th>
+          <th class="px-4 py-2">Fecha</th>
+          <th class="px-4 py-2">Entrenador</th>
+          <th class="px-4 py-2">Apellido del Entrenador</th>
+          <th class="px-4 py-2">Tipo de Entrenamiento</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let appointment of appointmentsDataSource.data" class="bg-gray-100">
+          <td class="border px-4 py-2">{{appointment.id}}</td>
+          <td class="border px-4 py-2">{{appointment.date | date}}</td>
+          <td class="border px-4 py-2">{{appointment.coachName}}</td>
+          <td class="border px-4 py-2">{{appointment.coachSurname}}</td>
+          <td class="border px-4 py-2">{{appointment.trainingType}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
