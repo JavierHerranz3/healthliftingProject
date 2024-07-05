@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Athlete } from '../../../core/models/athlete.model';
 import { Appointment } from '../../../core/models/appointment.model';
+import { Page } from '../../../core/models/page.model';
 
 @Injectable({
   providedIn: 'root',
@@ -56,10 +57,4 @@ export class AthleteService {
   }
 }
 
-export interface Page<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-}
+export { Page };

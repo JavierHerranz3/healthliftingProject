@@ -14,6 +14,7 @@ import { AppointmentDetailComponent } from './pages/appointment-detail/appointme
 import { AppointmentRoutingModule } from './appointment-routing.module';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatDatepickerModule,
     MatNativeDateModule,
     AppointmentRoutingModule,
+    MatAutocompleteModule,
   ],
 })
 export class AppointmentsModule {}

@@ -1,23 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AthleteService, Page } from '../../../athlete/service/athlete.service';
-import { CoachService } from '../../../coach/service/coach.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Athlete } from '../../../../core/models/athlete.model';
 import { Coach } from '../../../../core/models/coach.model';
-import { Appointment } from '../../../../core/models/appointment.model';
-import { trainningType } from '../../../../core/models/trainningSheet.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { CoachService } from '../../../coach/service/coach.service';
+import { AthleteService } from '../../../athlete/service/athlete.service';
 import { AppointmentService } from '../../service/appointment.service';
+import { trainningType } from '../../../../core/models/trainningSheet.model';
+import { Appointment } from '../../../../core/models/appointment.model';
 
 @Component({
   selector: 'app-appointment-create',
@@ -25,10 +16,10 @@ import { AppointmentService } from '../../service/appointment.service';
   styleUrls: ['./appointment-create.component.css'],
 })
 export class AppointmentCreateComponent implements OnInit {
-  appointmentForm!: FormGroup;
-  athletes: Athlete[] = [];
+  appointmentForm: FormGroup;
+  creationMessage: string = '';
   coaches: Coach[] = [];
-  appointments: Appointment[] = [];
+  athletes: Athlete[] = [];
   trainingTypes: string[] = Object.values(trainningType);
   hours: string[] = [
     '08:00',
@@ -43,28 +34,15 @@ export class AppointmentCreateComponent implements OnInit {
     '17:00',
     '18:00',
   ];
-  displayedColumns: string[] = [
-    'date',
-    'time',
-    'athlete',
-    'coach',
-    'trainingType',
-  ];
-  dataSource = new MatTableDataSource<Appointment>();
-  searchControl = new FormControl('');
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private fb: FormBuilder,
-    private athleteService: AthleteService,
-    private coachService: CoachService,
-    private appointmentService: AppointmentService,
-    private snackBar: MatSnackBar
-  ) {}
-
-  ngOnInit(): void {
+    private _appointmentService: AppointmentService,
+    private _coachService: CoachService,
+    private _athleteService: AthleteService,
+    private _router: Router,
+    private _snackBar: MatSnackBar
+  ) {
     this.appointmentForm = this.fb.group({
       date: ['', Validators.required],
       time: ['', Validators.required],
@@ -72,93 +50,119 @@ export class AppointmentCreateComponent implements OnInit {
       coachId: ['', Validators.required],
       trainingType: ['', Validators.required],
     });
+  }
 
-    this.loadAthletes();
+  ngOnInit(): void {
     this.loadCoaches();
-    this.loadAppointments();
-
-    this.searchControl.valueChanges.subscribe((value) =>
-      this.applyFilter(value)
-    );
+    this.loadAthletes();
   }
 
-  loadAthletes(): void {
-    this.athleteService.getAthletes(0, 10).subscribe({
-      next: (pageData: Page<Athlete>) => {
-        this.athletes = pageData.content;
+  loadCoaches() {
+    this._coachService.getCoaches(0, 20).subscribe({
+      next: (response) => {
+        this.coaches = response.content;
       },
-      error: (error) => {
-        console.error('Error fetching athletes:', error);
-      },
+      error: (error) => console.error('Error fetching coaches:', error),
     });
   }
 
-  loadCoaches(): void {
-    this.coachService.getCoaches().subscribe((coaches: Coach[]) => {
-      this.coaches = coaches;
+  loadAthletes() {
+    this._athleteService.getAthletes(0, 20).subscribe({
+      next: (response) => {
+        this.athletes = response.content;
+      },
+      error: (error) => console.error('Error fetching athletes:', error),
     });
   }
 
-  loadAppointments(): void {
-    this.appointmentService
-      .getAppointments()
-      .subscribe((appointments: Appointment[]) => {
-        this.appointments = appointments;
-        this.dataSource.data = appointments;
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+  onAthleteSelected(event: any) {
+    const selectedAthlete = this.athletes.find((a) => a.id === event.value);
+    if (selectedAthlete) {
+      this.appointmentForm.patchValue({
+        athleteId: selectedAthlete.id,
       });
-  }
-
-  applyFilter(filterValue: string | null): void {
-    this.dataSource.filter = (filterValue || '').trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
     }
   }
 
-  onSubmit(): void {
+  onCoachSelected(event: any) {
+    console.log('Selected coach event:', event); // Verifica que el evento se dispare
+    const selectedCoach = this.coaches.find((c) => c.id === event.value);
+    if (selectedCoach) {
+      this.appointmentForm.patchValue({
+        coachId: selectedCoach.id,
+      });
+      console.log('Selected coach:', selectedCoach); // Verifica que el entrenador se selecciona correctamente
+    }
+  }
+
+  submitForm() {
     if (this.appointmentForm.valid) {
       const formValues = this.appointmentForm.value;
+      console.log('Form Values:', formValues); // Verifica los valores del formulario antes de crear la cita
+
+      const combinedDateTime = new Date(formValues.date);
+      combinedDateTime.setHours(
+        Number(formValues.time.split(':')[0]),
+        Number(formValues.time.split(':')[1])
+      );
+
       const newAppointment: Appointment = {
-        date: formValues.date,
+        id: '',
+        date: combinedDateTime,
         time: formValues.time,
         athleteId: formValues.athleteId,
-        athleteName: this.getAthleteNameById(formValues.athleteId),
+        athleteName:
+          this.athletes.find((a) => a.id === formValues.athleteId)
+            ?.personalInformation.name || '',
+        athleteSurname:
+          this.athletes.find((a) => a.id === formValues.athleteId)
+            ?.personalInformation.surname || '',
         coachId: formValues.coachId,
-        coachName: this.getCoachNameById(formValues.coachId),
+        coachName:
+          this.coaches.find((c) => c.id === formValues.coachId)
+            ?.personalInformation.name || '',
+        coachSurname:
+          this.coaches.find((c) => c.id === formValues.coachId)
+            ?.personalInformation.surname || '',
         trainingType: formValues.trainingType,
-        id: '',
-        athleteSurname: '',
-        coachSurname: '',
       };
 
-      this.appointmentService.createAppointment(newAppointment).subscribe({
-        next: (appointment: Appointment) => {
-          this.appointments.push(appointment);
-          this.dataSource.data = this.appointments;
-          this.snackBar.open('Cita creada exitosamente', 'Cerrar', {
-            duration: 4000,
-          });
+      console.log('New Appointment:', newAppointment); // Verifica los valores de la nueva cita
+
+      this._appointmentService.createAppointment(newAppointment).subscribe({
+        next: () => {
+          this.showSnackBar('Cita creada exitosamente', 'Exito');
+          this.resetForm();
+          setTimeout(() => this._router.navigate(['/appointments/list']), 2000);
         },
-        error: (error: any) => {
+        error: (error) => {
           console.error('Error al crear la cita:', error);
+          this.showSnackBar('Error al crear la cita', 'Error');
         },
       });
+    } else {
+      console.error('Error al crear la cita: Formulario inválido');
+      this.showSnackBar(
+        'Formulario inválido. Revise los datos ingresados.',
+        'Error'
+      );
     }
   }
 
-  getAthleteNameById(id: string): string {
-    const athlete = this.athletes.find((a) => a.id === id);
-    return athlete
-      ? `${athlete.personalInformation.name} ${athlete.personalInformation.surname}`
-      : '';
+  private showSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom',
+    });
   }
 
-  getCoachNameById(id: string): string {
-    const coach = this.coaches.find((c) => c.id === id);
-    return coach
-      ? `${coach.personalInformation.name} ${coach.personalInformation.surname}`
-      : '';
+  private resetForm() {
+    this.appointmentForm.reset();
+    Object.keys(this.appointmentForm.controls).forEach((key) => {
+      this.appointmentForm.get(key)?.setErrors(null);
+      this.appointmentForm.get(key)?.markAsPristine();
+      this.appointmentForm.get(key)?.markAsUntouched();
+    });
   }
 }

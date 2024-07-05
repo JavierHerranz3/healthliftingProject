@@ -16,6 +16,8 @@ import { AthleteCreateComponent } from './components/athlete-create/athlete-crea
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSortModule } from '@angular/material/sort';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
   declarations: [
@@ -39,6 +41,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatDialogModule,
     FormsModule,
     MatProgressSpinnerModule,
+    MatSortModule,
+    MatListModule,
   ],
 })
 export class AthleteModule {}

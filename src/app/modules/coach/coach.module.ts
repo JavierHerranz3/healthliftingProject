@@ -14,6 +14,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CoachDetailComponent } from './pages/coach-detail/coach-detail.component';
 import { CoachListComponent } from './pages/coach-list/coach-list.component';
 import { CoachCreateComponent } from './coach-create/coach-create.component';
+import { MatSortModule } from '@angular/material/sort';
+import { MatOptionModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -34,6 +37,10 @@ import { CoachCreateComponent } from './coach-create/coach-create.component';
     MatTableModule,
     MatToolbarModule,
     FormsModule,
+    MatSortModule,
+    MatOptionModule,
+    MatIconModule,
+    MatButtonModule,
   ],
 })
 export class CoachModule {}

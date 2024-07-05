@@ -1,6 +1,6 @@
 export interface Appointment {
   id: string;
-  date: Date;
+  date: Date | null;
   time: string;
   athleteId: string;
   athleteName: string;

@@ -1,11 +1,19 @@
 <div class="search-container">
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="fill" class="w-full max-w-md">
     <mat-label>Buscar por documento</mat-label>
-    <input matInput (input)="applyFilter($event)" placeholder="Documento de identidad">
+    <input matInput [formControl]="searchControl" placeholder="Documento de identidad">
   </mat-form-field>
+
+  <div *ngIf="filteredAthletes.length > 0" class="bg-white border border-gray-300 rounded-md shadow-md max-h-60 overflow-y-auto mt-2 w-full max-w-md">
+    <ul>
+      <li *ngFor="let athlete of filteredAthletes" (click)="goToDetail(athlete)" class="p-2 cursor-pointer hover:bg-gray-100">
+        {{ athlete.personalInformation.documentType }}: {{ athlete.personalInformation.document }} - {{ athlete.personalInformation.name }} {{ athlete.personalInformation.surname }}
+      </li>
+    </ul>
+  </div>
 </div>
 
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8 mt-4">
   <table mat-table [dataSource]="dataSource" class="mat-table" matSort>
 
     <!-- Name Column -->
