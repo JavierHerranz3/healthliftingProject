@@ -47,6 +47,10 @@ export class AthleteService {
     return this._http.post<Athlete>(this._apiUrl, athlete);
   }
 
+  updateAthlete(id: string, athlete: Athlete): Observable<Athlete> {
+    return this._http.patch<Athlete>(`${this._apiUrl}/${id}`, athlete);
+  }
+
   deleteAthlete(id: string): Observable<void> {
     return this._http.delete<void>(`${this._apiUrl}/${id}`);
   }

@@ -15,6 +15,7 @@ export class AthleteCreateComponent implements OnInit {
   athleteForm!: FormGroup;
   documentTypes: string[] = Object.values(DocumentType);
   inputMessage: string = '';
+  isLoading = false; // Variable para el estado de carga
 
   constructor(
     private _fb: FormBuilder,
@@ -57,21 +58,20 @@ export class AthleteCreateComponent implements OnInit {
   }
 
   private createAthlete(newAthlete: any): void {
-    //mostrar estado de carga
+    this.isLoading = true; // Mostrar el spinner
     this._athleteService.createAthlete(newAthlete).subscribe({
       next: (createdAthlete: Athlete) => {
+        this.isLoading = false; // Ocultar el spinner
         console.log(createdAthlete);
-        // if (createdAthlete && createdAthlete.id) {
-        //   this.inputMessage = 'Atleta creado';
-
-        //   // quitas el estado de carga
-        //   console.log(createdAthlete);
-        //   this._router.navigate(['/athletes/detail', createdAthlete.id]); // Redirigir a la página de detalles del atleta
-        // } else {
-        //   console.error('El objeto creado no tiene un ID:', createdAthlete);
-        // }
+        if (createdAthlete && createdAthlete.id) {
+          this.inputMessage = 'Atleta created';
+          this._router.navigate(['/athletes/detail', createdAthlete.id]); // Redirigir a la página de detalles del atleta
+        } else {
+          console.error('El objeto creado no tiene un ID:', createdAthlete);
+        }
       },
       error: (error) => {
+        this.isLoading = false; // Ocultar el spinner
         console.error('Error al crear al Atleta:', error);
       },
     });

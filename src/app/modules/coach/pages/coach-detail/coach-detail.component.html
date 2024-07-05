@@ -1,1 +1,62 @@
-<p>coach-detail works!</p>
+<div class="container mx-auto p-4">
+    <div class="flex justify-end mb-4">
+      <button class="bg-blue-500 text-white px-4 py-2 rounded mr-2" (click)="modifyCoach()">Modificar Entrenador</button>
+      <button class="bg-red-500 text-white px-4 py-2 rounded" (click)="confirmDelete()">Eliminar Entrenador</button>
+    </div>
+  
+    <div class="bg-white p-6 rounded-lg shadow-md coach-details" *ngIf="coach && !isEditing">
+      <h2 class="text-xl font-bold mb-4">Detalles del Entrenador</h2>
+      <div *ngIf="coach">
+        <p><strong>Nombre:</strong> {{ coach.personalInformation.name }}</p>
+        <p><strong>Apellido:</strong> {{ coach.personalInformation.surname }}</p>
+        <p><strong>Tipo de Documento:</strong> {{ coach.personalInformation.documentType }}</p>
+        <p><strong>Documento:</strong> {{ coach.personalInformation.document }}</p>
+        
+      </div>
+    </div>
+  
+    <div class="bg-white p-6 rounded-lg shadow-md" *ngIf="coach && isEditing">
+      <h2 class="text-xl font-bold mb-4">Modificar Entrenador</h2>
+      <form (ngSubmit)="saveChanges()">
+        <div class="mb-4">
+          <label for="name" class="block text-gray-700">Nombre</label>
+          <input id="name" [(ngModel)]="coach.personalInformation.name" name="name" class="mt-1 p-2 border rounded w-full">
+        </div>
+        <div class="mb-4">
+          <label for="surname" class="block text-gray-700">Apellido</label>
+          <input id="surname" [(ngModel)]="coach.personalInformation.surname" name="surname" class="mt-1 p-2 border rounded w-full">
+        </div>
+        <div class="mb-4">
+          <label for="document" class="block text-gray-700">Documento</label>
+          <input id="document" [(ngModel)]="coach.personalInformation.document" name="document" class="mt-1 p-2 border rounded w-full">
+        </div>
+        <div class="flex justify-end">
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mr-2">Aceptar</button>
+          <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded" (click)="toggleEdit()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  
+    <div class="mt-6 appointments" *ngIf="coach">
+      <h2 class="text-xl font-bold mb-4">Citas del Entrenador</h2>
+      <table class="min-w-full bg-white mat-elevation-z8">
+        <thead>
+          <tr>
+            <th class="px-4 py-2">Fecha</th>
+            <th class="px-4 py-2">Nombre del Atleta</th>
+            <th class="px-4 py-2">Apellido del Atleta</th>
+            <th class="px-4 py-2">Tipo de Entrenamiento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let appointment of appointmentsDataSource.data" class="bg-gray-100">
+            <td class="border px-4 py-2">{{appointment.date | date}}</td>
+            <td class="border px-4 py-2">{{appointment.athleteName}}</td>
+            <td class="border px-4 py-2">{{appointment.athleteSurname}}</td>
+            <td class="border px-4 py-2">{{appointment.trainingType}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>

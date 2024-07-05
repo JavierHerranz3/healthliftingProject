@@ -12,6 +12,6 @@ export interface PersonalInformation {
   document: string;
 }
 export enum DocumentType {
-  ID = 'ID',
+  DNI = 'DNI',
   PASSPORT = 'PASSPORT',
 }

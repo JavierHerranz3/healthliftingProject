@@ -3,9 +3,9 @@
     <button class="bg-blue-500 text-white px-4 py-2 rounded mr-2" (click)="modifyAthlete()">Modificar Atleta</button>
     <button class="bg-red-500 text-white px-4 py-2 rounded" (click)="confirmDelete()">Eliminar Atleta</button>
   </div>
-  
-  <div class="bg-white p-6 rounded-lg shadow-md athlete-details">
-    <h2 class="text-xl font-bold mb-4">Detalle del Atleta</h2>
+
+  <div class="bg-white p-6 rounded-lg shadow-md athlete-details" *ngIf="athlete && !isEditing">
+    <h2 class="text-xl font-bold mb-4">Detalles del Atleta</h2>
     <div *ngIf="athlete">
       <p><strong>Nombre:</strong> {{ athlete.personalInformation.name }}</p>
       <p><strong>Apellido:</strong> {{ athlete.personalInformation.surname }}</p>
@@ -16,12 +16,41 @@
     </div>
   </div>
 
-  <div class="mt-6 appointments">
+  <div class="bg-white p-6 rounded-lg shadow-md" *ngIf="athlete && isEditing">
+    <h2 class="text-xl font-bold mb-4">Modificar Atleta</h2>
+    <form (ngSubmit)="saveChanges()">
+      <div class="mb-4">
+        <label for="name" class="block text-gray-700">Nombre</label>
+        <input id="name" [(ngModel)]="athlete.personalInformation.name" name="name" class="mt-1 p-2 border rounded w-full">
+      </div>
+      <div class="mb-4">
+        <label for="surname" class="block text-gray-700">Apellido</label>
+        <input id="surname" [(ngModel)]="athlete.personalInformation.surname" name="surname" class="mt-1 p-2 border rounded w-full">
+      </div>
+      <div class="mb-4">
+        <label for="document" class="block text-gray-700">Documento</label>
+        <input id="document" [(ngModel)]="athlete.personalInformation.document" name="document" class="mt-1 p-2 border rounded w-full">
+      </div>
+      <div class="mb-4">
+        <label for="age" class="block text-gray-700">Edad</label>
+        <input id="age" [(ngModel)]="athlete.age" name="age" class="mt-1 p-2 border rounded w-full">
+      </div>
+      <div class="mb-4">
+        <label for="height" class="block text-gray-700">Altura</label>
+        <input id="height" [(ngModel)]="athlete.height" name="height" class="mt-1 p-2 border rounded w-full">
+      </div>
+      <div class="flex justify-end">
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mr-2">Aceptar</button>
+        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded" (click)="toggleEdit()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="mt-6 appointments" *ngIf="athlete">
     <h2 class="text-xl font-bold mb-4">Citas del Atleta</h2>
     <table class="min-w-full bg-white mat-elevation-z8">
       <thead>
         <tr>
-          <th class="px-4 py-2">ID</th>
           <th class="px-4 py-2">Fecha</th>
           <th class="px-4 py-2">Entrenador</th>
           <th class="px-4 py-2">Apellido del Entrenador</th>
@@ -30,7 +59,6 @@
       </thead>
       <tbody>
         <tr *ngFor="let appointment of appointmentsDataSource.data" class="bg-gray-100">
-          <td class="border px-4 py-2">{{appointment.id}}</td>
           <td class="border px-4 py-2">{{appointment.date | date}}</td>
           <td class="border px-4 py-2">{{appointment.coachName}}</td>
           <td class="border px-4 py-2">{{appointment.coachSurname}}</td>

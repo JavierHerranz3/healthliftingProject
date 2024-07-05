@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AthleteRoutingModule } from './athlete-routing.module';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +15,7 @@ import { AthleteListComponent } from './pages/athlete-list/athlete-list.componen
 import { AthleteCreateComponent } from './components/athlete-create/athlete-create.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatTableModule,
     MatToolbarModule,
     MatDialogModule,
+    FormsModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class AthleteModule {}

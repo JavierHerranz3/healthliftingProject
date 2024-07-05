@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Athlete } from '../../../../core/models/athlete.model';
+import { Athlete, DocumentType } from '../../../../core/models/athlete.model';
 import { Appointment } from '../../../../core/models/appointment.model';
 import { AthleteService } from '../../service/athlete.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -16,7 +16,7 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 })
 export class AthleteDetailComponent implements OnInit {
   protected id: string = '';
-  protected athlete: Athlete | undefined;
+  protected athlete?: Athlete;
   protected dataSource = new MatTableDataSource<Athlete>();
   protected appointmentsDataSource = new MatTableDataSource<Appointment>(); // DataSource para las citas
   protected page?: { content: Athlete[]; totalElements: number };
@@ -29,8 +29,10 @@ export class AthleteDetailComponent implements OnInit {
     'trainingType',
   ];
   protected activeAppointmentsCount = 0;
+  protected isEditing = false; // Nueva variable para controlar el estado de edición
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  documentTypes: any;
 
   constructor(
     private _athleteService: AthleteService,
@@ -74,6 +76,10 @@ export class AthleteDetailComponent implements OnInit {
     });
   }
 
+  toggleEdit(): void {
+    this.isEditing = !this.isEditing;
+  }
+
   confirmDelete(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '250px',
@@ -98,8 +104,24 @@ export class AthleteDetailComponent implements OnInit {
     });
   }
 
+  saveChanges(): void {
+    if (this.athlete) {
+      this._athleteService.updateAthlete(this.id, this.athlete).subscribe({
+        next: () => {
+          console.log('Athlete updated successfully');
+          this.toggleEdit();
+          this._snackBar.open('Atleta actualizado correctamente', 'Cerrar', {
+            duration: 3000,
+          });
+        },
+        error: (err) => {
+          console.error('Error updating athlete', err);
+        },
+      });
+    }
+  }
+
   modifyAthlete(): void {
-    // Navega a la página de edición del atleta
-    this._routerNav.navigate(['/athletes/modify', this.id]);
+    this.toggleEdit();
   }
 }

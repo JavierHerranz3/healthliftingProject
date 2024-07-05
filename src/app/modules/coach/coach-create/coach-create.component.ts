@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CoachService } from '../service/coach.service';
-import { DocumentType } from '../../../core/models/coach.model';
+import { Coach, DocumentType } from '../../../core/models/coach.model';
 
 @Component({
   selector: 'app-coach-create',
@@ -14,6 +14,7 @@ export class CoachCreateComponent implements OnInit {
   coachForm!: FormGroup;
   documentTypes: string[] = Object.values(DocumentType);
   inputMessage: string = '';
+  isLoading = false; // Variable para el estado de carga
 
   constructor(
     private _fb: FormBuilder,
@@ -51,15 +52,17 @@ export class CoachCreateComponent implements OnInit {
   }
 
   private createCoach(newCoach: any): void {
+    this.isLoading = true; // Mostrar el spinner
     this._coachService.createCoach(newCoach).subscribe({
-      next: (value: any) => {
-        this.inputMessage = 'Entrenador creado exitosamente';
-        this._snackBar.open(this.inputMessage, 'Cerrar', {
-          duration: 4000,
-        });
-        setTimeout(() => {
-          this._router.navigate(['/coach/list']);
-        }, 4000);
+      next: (createdCoach: Coach) => {
+        this.isLoading = false; // Ocultar el spinner
+        console.log(createdCoach);
+        if (createdCoach && createdCoach.id) {
+          this.inputMessage = 'Coach created';
+          this._router.navigate(['/coaches/detail', createdCoach.id]); // Redirigir a la página de detalles del atleta
+        } else {
+          console.error('El objeto creado no tiene un ID:', createdCoach);
+        }
       },
       error: (error: any) => {
         console.error('Error al crear al Entrenador:', error);
