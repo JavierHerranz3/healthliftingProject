@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { AthleteService } from '../../athlete/service/athlete.service';
 import { CoachService } from '../../coach/service/coach.service';
 import { Appointment } from '../../../core/models/appointment.model';
@@ -23,6 +23,9 @@ export class AppointmentService {
   }
 
   createAppointment(appointment: any): Observable<Appointment> {
-    return this.http.post<any>(this._apiUrl, appointment);
+    console.log('Creating appointment:', appointment);
+    return this.http
+      .post<any>(this._apiUrl, appointment)
+      .pipe(tap((response) => console.log('Appointment created:', response)));
   }
 }

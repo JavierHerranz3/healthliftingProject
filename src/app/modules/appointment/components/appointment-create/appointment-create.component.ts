@@ -8,7 +8,7 @@ import { CoachService } from '../../../coach/service/coach.service';
 import { AthleteService } from '../../../athlete/service/athlete.service';
 import { AppointmentService } from '../../service/appointment.service';
 import { trainningType } from '../../../../core/models/trainningSheet.model';
-import { Appointment } from '../../../../core/models/appointment.model';
+import moment from 'moment';
 
 @Component({
   selector: 'app-appointment-create',
@@ -21,19 +21,6 @@ export class AppointmentCreateComponent implements OnInit {
   coaches: Coach[] = [];
   athletes: Athlete[] = [];
   trainingTypes: string[] = Object.values(trainningType);
-  hours: string[] = [
-    '08:00',
-    '09:00',
-    '10:00',
-    '11:00',
-    '12:00',
-    '13:00',
-    '14:00',
-    '15:00',
-    '16:00',
-    '17:00',
-    '18:00',
-  ];
 
   constructor(
     private fb: FormBuilder,
@@ -61,6 +48,7 @@ export class AppointmentCreateComponent implements OnInit {
     this._coachService.getCoaches(0, 20).subscribe({
       next: (response) => {
         this.coaches = response.content;
+        console.log('Coaches loaded:', this.coaches);
       },
       error: (error) => console.error('Error fetching coaches:', error),
     });
@@ -70,6 +58,7 @@ export class AppointmentCreateComponent implements OnInit {
     this._athleteService.getAthletes(0, 20).subscribe({
       next: (response) => {
         this.athletes = response.content;
+        console.log('Athletes loaded:', this.athletes);
       },
       error: (error) => console.error('Error fetching athletes:', error),
     });
@@ -81,67 +70,95 @@ export class AppointmentCreateComponent implements OnInit {
       this.appointmentForm.patchValue({
         athleteId: selectedAthlete.id,
       });
+      console.log('Selected athlete:', selectedAthlete);
     }
   }
 
   onCoachSelected(event: any) {
-    console.log('Selected coach event:', event); // Verifica que el evento se dispare
+    console.log('Selected coach event:', event);
     const selectedCoach = this.coaches.find((c) => c.id === event.value);
     if (selectedCoach) {
       this.appointmentForm.patchValue({
         coachId: selectedCoach.id,
       });
-      console.log('Selected coach:', selectedCoach); // Verifica que el entrenador se selecciona correctamente
+      console.log('Selected coach:', selectedCoach);
+    } else {
+      console.log('No coach found for the selected value:', event.value);
     }
   }
 
   submitForm() {
     if (this.appointmentForm.valid) {
       const formValues = this.appointmentForm.value;
-      console.log('Form Values:', formValues); // Verifica los valores del formulario antes de crear la cita
+      console.log('Form Values:', formValues);
 
-      const combinedDateTime = new Date(formValues.date);
-      combinedDateTime.setHours(
-        Number(formValues.time.split(':')[0]),
-        Number(formValues.time.split(':')[1])
+      // Construir la fecha y hora en el formato adecuado
+      const combinedDateTime = moment(formValues.date)
+        .set({
+          hour: moment(formValues.time, 'HH:mm').hour(),
+          minute: moment(formValues.time, 'HH:mm').minute(),
+        })
+        .toISOString();
+
+      const selectedAthlete = this.athletes.find(
+        (a) => a.id === formValues.athleteId
+      );
+      const selectedCoach = this.coaches.find(
+        (c) => c.id === formValues.coachId
       );
 
-      const newAppointment: Appointment = {
-        id: '',
+      if (!selectedAthlete || !selectedCoach) {
+        console.error('Selected athlete or coach not found');
+        this.showSnackBar('Atleta o entrenador no encontrado', 'Error');
+        return;
+      }
+
+      const newAppointment = {
         date: combinedDateTime,
-        time: formValues.time,
-        athleteId: formValues.athleteId,
-        athleteName:
-          this.athletes.find((a) => a.id === formValues.athleteId)
-            ?.personalInformation.name || '',
-        athleteSurname:
-          this.athletes.find((a) => a.id === formValues.athleteId)
-            ?.personalInformation.surname || '',
-        coachId: formValues.coachId,
-        coachName:
-          this.coaches.find((c) => c.id === formValues.coachId)
-            ?.personalInformation.name || '',
-        coachSurname:
-          this.coaches.find((c) => c.id === formValues.coachId)
-            ?.personalInformation.surname || '',
-        trainingType: formValues.trainingType,
+        coachId: selectedCoach.id,
+        coachName: selectedCoach.personalInformation.name,
+        coachSurname: selectedCoach.personalInformation.surname,
+        coachDocument: selectedCoach.personalInformation.document,
+        athleteId: selectedAthlete.id,
+        athleteName: selectedAthlete.personalInformation.name,
+        athleteSurname: selectedAthlete.personalInformation.surname,
+        athleteDocument: selectedAthlete.personalInformation.document,
+        trainingTypeRecord: formValues.trainingType,
       };
 
-      console.log('New Appointment:', newAppointment); // Verifica los valores de la nueva cita
+      console.log('New Appointment:', newAppointment);
 
       this._appointmentService.createAppointment(newAppointment).subscribe({
-        next: () => {
-          this.showSnackBar('Cita creada exitosamente', 'Exito');
+        next: (response) => {
+          this.showSnackBar('Cita creada exitosamente', 'Éxito');
           this.resetForm();
-          setTimeout(() => this._router.navigate(['/appointments/list']), 2000);
+          this._router.navigate(['/appointment/detail', response.id]); // Redirigir a la página de detalles de la cita
         },
         error: (error) => {
           console.error('Error al crear la cita:', error);
-          this.showSnackBar('Error al crear la cita', 'Error');
+          if (error.status === 400 && error.error) {
+            console.error('Detalles del error:', error.error);
+            this.showSnackBar(
+              `Error al crear la cita: ${error.error}`,
+              'Error'
+            );
+          } else {
+            this.showSnackBar(
+              'Error al crear la cita. Por favor, inténtelo de nuevo más tarde.',
+              'Error'
+            );
+          }
         },
       });
     } else {
       console.error('Error al crear la cita: Formulario inválido');
+      console.log('Form Controls:', this.appointmentForm.controls);
+      Object.keys(this.appointmentForm.controls).forEach((key) => {
+        const controlErrors = this.appointmentForm.get(key)?.errors;
+        if (controlErrors != null) {
+          console.log('Key control: ' + key + ', errors: ', controlErrors);
+        }
+      });
       this.showSnackBar(
         'Formulario inválido. Revise los datos ingresados.',
         'Error'

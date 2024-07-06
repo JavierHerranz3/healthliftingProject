@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Coach } from '../../../core/models/coach.model';
 import { apiUrl } from '../../../enviroment';
 import { Appointment } from '../../../core/models/appointment.model';
@@ -16,7 +16,16 @@ export class CoachService {
 
   getCoaches(page: number, size: number): Observable<Page<Coach>> {
     const params = { page: page.toString(), size: size.toString() };
-    return this._http.get<Page<Coach>>(this._apiUrl, { params });
+    return this._http.get<Page<Coach>>(this._apiUrl, { params }).pipe(
+      tap((response) => {
+        console.log('Coach response:', response);
+        // Verificar la estructura de la respuesta
+        response.content.forEach((coach: Coach) => {
+          console.log('Coach ID:', coach.id);
+          console.log('Coach Personal Information:', coach.personalInformation);
+        });
+      })
+    );
   }
 
   getCoachById(id: string): Observable<Coach> {

@@ -1,15 +1,13 @@
 export interface Coach {
   id: string;
-  personalInformation: PersonalInformation;
+  personalInformation: {
+    name: string;
+    surname: string;
+    documentType: string;
+    document: string;
+  };
   idAppointments: string[];
   idTrainingSheet: string[];
-}
-
-export interface PersonalInformation {
-  name: string;
-  surname: string;
-  documentType: DocumentType;
-  document: string;
 }
 export enum DocumentType {
   DNI = 'DNI',

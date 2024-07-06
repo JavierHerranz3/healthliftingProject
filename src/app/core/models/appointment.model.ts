@@ -1,12 +1,13 @@
 export interface Appointment {
   id: string;
-  date: Date | null;
-  time: string;
+  date: string;
   athleteId: string;
   athleteName: string;
   athleteSurname: string;
+  athleteDocument: string;
   coachId: string;
   coachName: string;
   coachSurname: string;
+  coachDocument: string;
   trainingType: string;
 }
