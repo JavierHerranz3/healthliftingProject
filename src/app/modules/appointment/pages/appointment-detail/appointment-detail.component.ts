@@ -7,8 +7,11 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 import { AppointmentService } from '../../service/appointment.service';
 import { AthleteService } from '../../../athlete/service/athlete.service';
 import { CoachService } from '../../../coach/service/coach.service';
-import { FriendlyTrainingType } from '../../../../core/models/trainningSheet.model';
-import moment from 'moment';
+import {
+  FriendlyTrainingType,
+  TrainingTypeRecordMap,
+} from '../../../../core/models/trainningSheet.model';
+import moment from 'moment-timezone';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -16,14 +19,14 @@ import moment from 'moment';
   styleUrls: ['./appointment-detail.component.css'],
 })
 export class AppointmentDetailComponent implements OnInit {
-  appointmentForm: FormGroup;
-  appointment: any = {}; // Inicializar appointment como un objeto vacío para evitar errores de lectura de propiedades
+  appointment: any = {}; // Inicializar como objeto vacío para evitar undefined
   athlete: any;
   coach: any;
   coaches: any[] = [];
   trainingTypes: string[] = Object.values(FriendlyTrainingType);
   id: string = '';
   isEditing = false;
+  appointmentForm: FormGroup;
 
   constructor(
     private route: ActivatedRoute,
@@ -54,13 +57,9 @@ export class AppointmentDetailComponent implements OnInit {
     this.appointmentService.getAppointmentById(id).subscribe({
       next: (appointment) => {
         this.appointment = appointment;
-        this.appointmentForm.patchValue({
-          date: appointment.date,
-          time: moment(appointment.date).format('HH:mm'), // Extract time from date
-          trainingType: appointment.trainingTypeRecord,
-        });
         this.getAthleteById(appointment.athleteId);
         this.getCoachById(appointment.coachId);
+        this.populateForm(); // Populate form with existing appointment data
       },
       error: (err) => console.error('Error fetching appointment', err),
     });
@@ -81,53 +80,63 @@ export class AppointmentDetailComponent implements OnInit {
   }
 
   loadCoaches(): void {
-    this.coachService.getCoaches(0, 20).subscribe({
-      next: (response) => {
-        this.coaches = response.content;
-        console.log('Coaches loaded:', this.coaches);
-      },
-      error: (error) => console.error('Error fetching coaches:', error),
+    this.coachService.getCoaches(0, 100).subscribe({
+      next: (page) => (this.coaches = page.content),
+      error: (err) => console.error('Error fetching coaches', err),
     });
   }
 
   toggleEdit(): void {
     this.isEditing = !this.isEditing;
-    if (this.isEditing) {
-      this.appointmentForm.enable(); // Enable the form fields for editing
-    } else {
-      this.appointmentForm.disable(); // Disable the form fields to prevent editing
-    }
   }
 
   saveChanges(): void {
-    const formValues = this.appointmentForm.value;
+    if (this.appointmentForm.valid) {
+      const formValues = this.appointmentForm.value;
+      const combinedDateTime = moment(
+        formValues.date + ' ' + formValues.time,
+        'YYYY-MM-DD HH:mm'
+      ).toISOString(true); // Adjusted for the desired format with timezone
 
-    // Combinar la fecha y la hora en un solo objeto ISO string con formato adecuado
-    const combinedDateTime = moment(formValues.date)
-      .set({
-        hour: moment(formValues.time, 'HH:mm').hour(),
-        minute: moment(formValues.time, 'HH:mm').minute(),
-      })
-      .toISOString();
+      const updatedAppointment = {
+        ...this.appointment,
+        date: combinedDateTime,
+        trainingTypeRecord:
+          TrainingTypeRecordMap[
+            formValues.trainingType as FriendlyTrainingType
+          ],
+      };
 
-    const updatedAppointment = {
-      ...this.appointment,
-      date: combinedDateTime,
-      trainingType: formValues.trainingTypeRecord,
-    };
+      this.appointmentService
+        .updateAppointment(this.id, updatedAppointment)
+        .subscribe({
+          next: () => {
+            this.snackBar.open('Cita actualizada correctamente', 'Cerrar', {
+              duration: 3000,
+            });
+            this.toggleEdit();
+            this.getAppointmentById(this.id); // Refrescar los datos de la cita
+          },
+          error: (err) => console.error('Error updating appointment', err),
+        });
+    }
+  }
 
-    this.appointmentService
-      .updateAppointment(this.id, updatedAppointment)
-      .subscribe({
-        next: () => {
-          this.snackBar.open('Cita actualizada correctamente', 'Cerrar', {
-            duration: 3000,
-          });
-          this.toggleEdit();
-          this.getAppointmentById(this.id); // Refrescar los datos de la cita
-        },
-        error: (err) => console.error('Error updating appointment', err),
+  populateForm(): void {
+    if (this.appointment && this.appointment.date) {
+      const date = moment(this.appointment.date).format('YYYY-MM-DD');
+      const time = moment(this.appointment.date).format('HH:mm');
+      this.appointmentForm.patchValue({
+        date: date,
+        time: time,
+        trainingType: Object.keys(FriendlyTrainingType).find(
+          (key) =>
+            TrainingTypeRecordMap[
+              FriendlyTrainingType[key as keyof typeof FriendlyTrainingType]
+            ] === this.appointment.trainingTypeRecord
+        ),
       });
+    }
   }
 
   confirmDelete(): void {

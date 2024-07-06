@@ -8,25 +8,24 @@ export enum trainningType {
   REHABILITATION = 'REHABILITATION',
 }
 
-// src/app/core/models/trainningSheet.model.ts
-// src/app/core/models/trainningSheet.model.ts
 export enum FriendlyTrainingType {
   STRENGHT = 'Fuerza',
   FUNCTIONAL = 'Funcional',
   ENDURANCE = 'Resistencia',
   HIIT = 'HIIT',
-  POWER = 'Potencia', // Cambiar a un nombre único
+  POWER = 'Potencia',
   ASSESSMENT = 'Valoración',
   REHABILITATION = 'Rehabilitación',
 }
 
-export const TrainingTypeRecordMap: { [key in FriendlyTrainingType]: string } =
-  {
-    [FriendlyTrainingType.STRENGHT]: 'STRENGHT',
-    [FriendlyTrainingType.FUNCTIONAL]: 'FUNCTIONAL',
-    [FriendlyTrainingType.ENDURANCE]: 'ENDURANCE',
-    [FriendlyTrainingType.HIIT]: 'HIIT',
-    [FriendlyTrainingType.POWER]: 'POWER',
-    [FriendlyTrainingType.ASSESSMENT]: 'ASSESSMENT',
-    [FriendlyTrainingType.REHABILITATION]: 'REHABILITATION',
-  };
+export const TrainingTypeRecordMap: {
+  [key in FriendlyTrainingType]: trainningType;
+} = {
+  [FriendlyTrainingType.STRENGHT]: trainningType.STRENGHT,
+  [FriendlyTrainingType.FUNCTIONAL]: trainningType.FUNCTIONAL,
+  [FriendlyTrainingType.ENDURANCE]: trainningType.ENDURANCE,
+  [FriendlyTrainingType.HIIT]: trainningType.HIIT,
+  [FriendlyTrainingType.POWER]: trainningType.POWER,
+  [FriendlyTrainingType.ASSESSMENT]: trainningType.ASSESSMENT,
+  [FriendlyTrainingType.REHABILITATION]: trainningType.REHABILITATION,
+};

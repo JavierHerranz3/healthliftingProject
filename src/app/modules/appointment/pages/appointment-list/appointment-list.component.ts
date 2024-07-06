@@ -7,6 +7,7 @@ import { AppointmentService } from '../../service/appointment.service';
 import { Appointment } from '../../../../core/models/appointment.model';
 import {
   FriendlyTrainingType,
+  TrainingTypeRecordMap,
   trainningType,
 } from '../../../../core/models/trainningSheet.model';
 
@@ -59,14 +60,15 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(): void {
+    const trainingTypeFriendly = this.trainingTypeControl.value?.trim() || '';
     const trainingType =
-      this.trainingTypeControl.value?.trim().toLowerCase() || '';
+      TrainingTypeRecordMap[trainingTypeFriendly as FriendlyTrainingType] || '';
     const name = this.nameControl.value?.trim().toLowerCase() || '';
 
     this.dataSource.filterPredicate = (data: Appointment, filter: string) => {
       const matchesTrainingType = data.trainingTypeRecord
         .toLowerCase()
-        .includes(trainingType);
+        .includes(trainingType.toLowerCase());
       const matchesName =
         data.athleteName.toLowerCase().includes(name) ||
         data.athleteSurname.toLowerCase().includes(name) ||

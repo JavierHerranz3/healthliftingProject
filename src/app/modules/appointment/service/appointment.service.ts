@@ -39,8 +39,11 @@ export class AppointmentService {
     return this.http.post<any>(this._apiUrl, appointment);
   }
 
-  updateAppointment(id: string, appointment: Appointment): Observable<any> {
-    return this.http.put<any>(`${this._apiUrl}/${id}`, appointment);
+  updateAppointment(
+    id: string,
+    appointment: Partial<Appointment>
+  ): Observable<any> {
+    return this.http.patch<any>(`${this._apiUrl}/${id}`, appointment);
   }
 
   deleteAppointment(id: string): Observable<any> {
