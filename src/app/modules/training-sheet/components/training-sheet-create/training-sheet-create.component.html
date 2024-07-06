@@ -1,1 +1,43 @@
-<p>training-sheet-create works!</p>
+<div class="w-1/2 p-10 bg-white">
+    <mat-card class="h-full">
+      <mat-card-header>
+        <mat-card-title class="text-2xl font-bold mb-6">Crear Nueva Ficha de Entrenamiento</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="trainingSheetForm" (ngSubmit)="submitForm()" class="space-y-4">
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Tipo de Entrenamiento</mat-label>
+              <input matInput formControlName="trainingType">
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Observaciones</mat-label>
+              <textarea matInput formControlName="observations"></textarea>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Nombre del Entrenador</mat-label>
+              <input matInput formControlName="coachName">
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Nombre del Atleta</mat-label>
+              <input matInput formControlName="athleteName">
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label>Fecha de la Cita</mat-label>
+              <input matInput formControlName="appointmentDate">
+            </mat-form-field>
+          </div>
+          <button mat-raised-button color="primary" type="submit" class="w-full" [disabled]="isLoading">Crear Ficha de Entrenamiento</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  

@@ -163,4 +163,12 @@ export class AppointmentDetailComponent implements OnInit {
       error: (err) => console.error('Error deleting appointment', err),
     });
   }
+  navigateToCreateTrainingSheet(): void {
+    this.router.navigate(['/training-sheets/create-training-sheet'], {
+      queryParams: {
+        appointmentId: this.appointment.id,
+        athleteId: this.appointment.athleteId,
+      },
+    });
+  }
 }

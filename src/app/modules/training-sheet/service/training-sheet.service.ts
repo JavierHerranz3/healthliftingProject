@@ -26,8 +26,8 @@ export class TrainingSheetService {
     return this._http.get<TrainingSheet>(`${this._apiUrl}/${id}`);
   }
 
-  createTrainingSheet(trainingSheet: TrainingSheet): Observable<TrainingSheet> {
-    return this._http.post<TrainingSheet>(this._apiUrl, trainingSheet);
+  createTrainingSheet(trainingSheet: any): Observable<any> {
+    return this._http.post<any>(this._apiUrl, trainingSheet);
   }
 
   updateTrainingSheet(
