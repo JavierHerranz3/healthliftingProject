@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CoachService } from '../service/coach.service';
-import { Coach, DocumentType } from '../../../core/models/coach.model';
+
+import { CoachService } from '../../service/coach.service';
+import { Coach, DocumentType } from '../../../../core/models/coach.model';
 
 @Component({
   selector: 'app-coach-create',

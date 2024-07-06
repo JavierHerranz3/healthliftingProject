@@ -18,4 +18,11 @@ export const routes: Routes = [
         (m) => m.AppointmentsModule
       ),
   },
+  {
+    path: 'training-sheets',
+    loadChildren: () =>
+      import('./modules/training-sheet/training-sheet.module').then(
+        (m) => m.TrainingSheetModule
+      ),
+  },
 ];

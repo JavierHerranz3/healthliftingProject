@@ -8,7 +8,7 @@ import { Appointment } from '../../../../core/models/appointment.model';
 import {
   FriendlyTrainingType,
   TrainingTypeRecordMap,
-} from '../../../../core/models/trainningSheet.model';
+} from '../../../../core/models/trainningType.model';
 import { Router } from '@angular/router';
 
 @Component({

@@ -17,7 +17,7 @@ import { AppointmentService } from '../../service/appointment.service';
 import {
   FriendlyTrainingType,
   TrainingTypeRecordMap,
-} from '../../../../core/models/trainningSheet.model';
+} from '../../../../core/models/trainningType.model';
 import moment from 'moment';
 import { Appointment } from '../../../../core/models/appointment.model';
 

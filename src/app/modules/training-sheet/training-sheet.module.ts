@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { CoachRoutingModule } from './coach-routing.module';
+import { TrainingSheetRoutingModule } from './training-sheet-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,23 +10,23 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { CoachDetailComponent } from './pages/coach-detail/coach-detail.component';
-import { CoachListComponent } from './pages/coach-list/coach-list.component';
-
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
-import { MatOptionModule } from '@angular/material/core';
-import { MatIconModule } from '@angular/material/icon';
-import { CoachCreateComponent } from './components/coach-create/coach-create.component';
+import { MatListModule } from '@angular/material/list';
+import { TrainingSheetDetailComponent } from './pages/training-sheet-detail/training-sheet-detail.component';
+import { TrainingSheetListComponent } from './pages/training-sheet-list/training-sheet-list.component';
+import { TrainingSheetCreateComponent } from './components/training-sheet-create/training-sheet-create.component';
 
 @NgModule({
   declarations: [
-    CoachDetailComponent,
-    CoachListComponent,
-    CoachCreateComponent,
+    TrainingSheetDetailComponent,
+    TrainingSheetListComponent,
+    TrainingSheetCreateComponent,
   ],
   imports: [
     CommonModule,
-    CoachRoutingModule,
+    TrainingSheetRoutingModule,
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
@@ -37,11 +36,11 @@ import { CoachCreateComponent } from './components/coach-create/coach-create.com
     MatPaginatorModule,
     MatTableModule,
     MatToolbarModule,
+    MatDialogModule,
     FormsModule,
+    MatProgressSpinnerModule,
     MatSortModule,
-    MatOptionModule,
-    MatIconModule,
-    MatButtonModule,
+    MatListModule,
   ],
 })
-export class CoachModule {}
+export class TrainingSheetModule {}

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CoachDetailComponent } from './pages/coach-detail/coach-detail.component';
 import { CoachListComponent } from './pages/coach-list/coach-list.component';
-import { CoachCreateComponent } from './coach-create/coach-create.component';
+import { CoachCreateComponent } from './components/coach-create/coach-create.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'list', pathMatch: 'full' },
