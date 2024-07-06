@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -8,6 +8,7 @@ import { AppointmentService } from '../../service/appointment.service';
 import { AthleteService } from '../../../athlete/service/athlete.service';
 import { CoachService } from '../../../coach/service/coach.service';
 import { FriendlyTrainingType } from '../../../../core/models/trainningSheet.model';
+import moment from 'moment';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -15,7 +16,8 @@ import { FriendlyTrainingType } from '../../../../core/models/trainningSheet.mod
   styleUrls: ['./appointment-detail.component.css'],
 })
 export class AppointmentDetailComponent implements OnInit {
-  appointment: any;
+  appointmentForm: FormGroup;
+  appointment: any = {}; // Inicializar appointment como un objeto vacío para evitar errores de lectura de propiedades
   athlete: any;
   coach: any;
   coaches: any[] = [];
@@ -25,13 +27,20 @@ export class AppointmentDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private fb: FormBuilder,
     private appointmentService: AppointmentService,
     private athleteService: AthleteService,
     private coachService: CoachService,
     private router: Router,
     private snackBar: MatSnackBar,
     public dialog: MatDialog
-  ) {}
+  ) {
+    this.appointmentForm = this.fb.group({
+      date: ['', Validators.required],
+      time: ['', Validators.required],
+      trainingType: ['', Validators.required],
+    });
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -45,6 +54,11 @@ export class AppointmentDetailComponent implements OnInit {
     this.appointmentService.getAppointmentById(id).subscribe({
       next: (appointment) => {
         this.appointment = appointment;
+        this.appointmentForm.patchValue({
+          date: appointment.date,
+          time: moment(appointment.date).format('HH:mm'), // Extract time from date
+          trainingType: appointment.trainingTypeRecord,
+        });
         this.getAthleteById(appointment.athleteId);
         this.getCoachById(appointment.coachId);
       },
@@ -67,19 +81,43 @@ export class AppointmentDetailComponent implements OnInit {
   }
 
   loadCoaches(): void {
-    this.coachService.getCoaches(0, 100).subscribe({
-      next: (page) => (this.coaches = page.content),
-      error: (err) => console.error('Error fetching coaches', err),
+    this.coachService.getCoaches(0, 20).subscribe({
+      next: (response) => {
+        this.coaches = response.content;
+        console.log('Coaches loaded:', this.coaches);
+      },
+      error: (error) => console.error('Error fetching coaches:', error),
     });
   }
 
   toggleEdit(): void {
     this.isEditing = !this.isEditing;
+    if (this.isEditing) {
+      this.appointmentForm.enable(); // Enable the form fields for editing
+    } else {
+      this.appointmentForm.disable(); // Disable the form fields to prevent editing
+    }
   }
 
   saveChanges(): void {
+    const formValues = this.appointmentForm.value;
+
+    // Combinar la fecha y la hora en un solo objeto ISO string con formato adecuado
+    const combinedDateTime = moment(formValues.date)
+      .set({
+        hour: moment(formValues.time, 'HH:mm').hour(),
+        minute: moment(formValues.time, 'HH:mm').minute(),
+      })
+      .toISOString();
+
+    const updatedAppointment = {
+      ...this.appointment,
+      date: combinedDateTime,
+      trainingType: formValues.trainingTypeRecord,
+    };
+
     this.appointmentService
-      .updateAppointment(this.id, this.appointment)
+      .updateAppointment(this.id, updatedAppointment)
       .subscribe({
         next: () => {
           this.snackBar.open('Cita actualizada correctamente', 'Cerrar', {
