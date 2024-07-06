@@ -1,3 +1,5 @@
+// src/app/modules/appointment/components/appointment-create/appointment-create.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,8 +9,12 @@ import { Coach } from '../../../../core/models/coach.model';
 import { CoachService } from '../../../coach/service/coach.service';
 import { AthleteService } from '../../../athlete/service/athlete.service';
 import { AppointmentService } from '../../service/appointment.service';
-import { trainningType } from '../../../../core/models/trainningSheet.model';
+import {
+  FriendlyTrainingType,
+  TrainingTypeRecordMap,
+} from '../../../../core/models/trainningSheet.model';
 import moment from 'moment';
+import { Appointment } from '../../../../core/models/appointment.model';
 
 @Component({
   selector: 'app-appointment-create',
@@ -20,7 +26,7 @@ export class AppointmentCreateComponent implements OnInit {
   creationMessage: string = '';
   coaches: Coach[] = [];
   athletes: Athlete[] = [];
-  trainingTypes: string[] = Object.values(trainningType);
+  trainingTypes: string[] = Object.values(FriendlyTrainingType);
 
   constructor(
     private fb: FormBuilder,
@@ -34,7 +40,13 @@ export class AppointmentCreateComponent implements OnInit {
       date: ['', Validators.required],
       time: ['', Validators.required],
       athleteId: ['', Validators.required],
+      athleteName: [{ value: '', disabled: true }, Validators.required],
+      athleteSurname: [{ value: '', disabled: true }, Validators.required],
+      athleteDocument: [{ value: '', disabled: true }, Validators.required],
       coachId: ['', Validators.required],
+      coachName: [{ value: '', disabled: true }, Validators.required],
+      coachSurname: [{ value: '', disabled: true }, Validators.required],
+      coachDocument: [{ value: '', disabled: true }, Validators.required],
       trainingType: ['', Validators.required],
     });
   }
@@ -69,6 +81,9 @@ export class AppointmentCreateComponent implements OnInit {
     if (selectedAthlete) {
       this.appointmentForm.patchValue({
         athleteId: selectedAthlete.id,
+        athleteName: selectedAthlete.personalInformation.name,
+        athleteSurname: selectedAthlete.personalInformation.surname,
+        athleteDocument: selectedAthlete.personalInformation.document,
       });
       console.log('Selected athlete:', selectedAthlete);
     }
@@ -80,6 +95,9 @@ export class AppointmentCreateComponent implements OnInit {
     if (selectedCoach) {
       this.appointmentForm.patchValue({
         coachId: selectedCoach.id,
+        coachName: selectedCoach.personalInformation.name,
+        coachSurname: selectedCoach.personalInformation.surname,
+        coachDocument: selectedCoach.personalInformation.document,
       });
       console.log('Selected coach:', selectedCoach);
     } else {
@@ -89,50 +107,44 @@ export class AppointmentCreateComponent implements OnInit {
 
   submitForm() {
     if (this.appointmentForm.valid) {
-      const formValues = this.appointmentForm.value;
+      const formValues = this.appointmentForm.getRawValue(); // Use getRawValue() to include disabled fields
       console.log('Form Values:', formValues);
 
-      // Construir la fecha y hora en el formato adecuado
+      // Combinar la fecha y la hora en un solo objeto ISO string con formato adecuado
       const combinedDateTime = moment(formValues.date)
         .set({
           hour: moment(formValues.time, 'HH:mm').hour(),
           minute: moment(formValues.time, 'HH:mm').minute(),
         })
-        .toISOString();
+        .toISOString(); // Esto generará el formato 2021-01-14T03:07:22.000Z automáticamente
 
-      const selectedAthlete = this.athletes.find(
-        (a) => a.id === formValues.athleteId
-      );
-      const selectedCoach = this.coaches.find(
-        (c) => c.id === formValues.coachId
-      );
-
-      if (!selectedAthlete || !selectedCoach) {
-        console.error('Selected athlete or coach not found');
-        this.showSnackBar('Atleta o entrenador no encontrado', 'Error');
-        return;
-      }
-
+      // Crear el objeto de la nueva cita
       const newAppointment = {
         date: combinedDateTime,
-        coachId: selectedCoach.id,
-        coachName: selectedCoach.personalInformation.name,
-        coachSurname: selectedCoach.personalInformation.surname,
-        coachDocument: selectedCoach.personalInformation.document,
-        athleteId: selectedAthlete.id,
-        athleteName: selectedAthlete.personalInformation.name,
-        athleteSurname: selectedAthlete.personalInformation.surname,
-        athleteDocument: selectedAthlete.personalInformation.document,
-        trainingTypeRecord: formValues.trainingType,
+        coachId: formValues.coachId,
+        coachName: formValues.coachName,
+        coachSurname: formValues.coachSurname,
+        coachDocument: formValues.coachDocument,
+        athleteId: formValues.athleteId,
+        athleteName: formValues.athleteName,
+        athleteSurname: formValues.athleteSurname,
+        athleteDocument: formValues.athleteDocument,
+        trainingTypeRecord:
+          TrainingTypeRecordMap[
+            formValues.trainingType as FriendlyTrainingType
+          ], // Convertir el tipo de entrenamiento
       };
 
       console.log('New Appointment:', newAppointment);
 
       this._appointmentService.createAppointment(newAppointment).subscribe({
-        next: (response) => {
+        next: (createdAppointment: Appointment) => {
           this.showSnackBar('Cita creada exitosamente', 'Éxito');
           this.resetForm();
-          this._router.navigate(['/appointment/detail', response.id]); // Redirigir a la página de detalles de la cita
+          this._router.navigate([
+            '/appointments/detail',
+            createdAppointment.id,
+          ]); // Redirigir a la página de detalles de la cita
         },
         error: (error) => {
           console.error('Error al crear la cita:', error);

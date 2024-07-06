@@ -1,5 +1,5 @@
 export interface Appointment {
-  id: string;
+  id?: string;
   date: string;
   athleteId: string;
   athleteName: string;
@@ -9,5 +9,5 @@ export interface Appointment {
   coachName: string;
   coachSurname: string;
   coachDocument: string;
-  trainingType: string;
+  trainingTypeRecord: string;
 }

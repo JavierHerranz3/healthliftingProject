@@ -5,6 +5,8 @@ import { AthleteService } from '../../athlete/service/athlete.service';
 import { CoachService } from '../../coach/service/coach.service';
 import { Appointment } from '../../../core/models/appointment.model';
 import { apiUrl } from '../../../enviroment';
+import { Athlete } from '../../../core/models/athlete.model';
+import { Coach } from '../../../core/models/coach.model';
 
 @Injectable({
   providedIn: 'root',
@@ -19,13 +21,29 @@ export class AppointmentService {
   ) {}
 
   getAppointments(): Observable<Appointment[]> {
+    console.log('Fetching appointments from API:', this._apiUrl);
     return this.http.get<Appointment[]>(this._apiUrl);
   }
+  getAppointmentById(id: string): Observable<Appointment> {
+    return this.http.get<Appointment>(`${this._apiUrl}/${id}`);
+  }
+  getAthleteById(athleteId: string): Observable<Athlete> {
+    return this.http.get<Athlete>(`${this._apiUrl}/athletes/${athleteId}`);
+  }
 
-  createAppointment(appointment: any): Observable<Appointment> {
+  getCoachById(coachId: string): Observable<Coach> {
+    return this.http.get<Coach>(`${this._apiUrl}/coaches/${coachId}`);
+  }
+  createAppointment(appointment: Appointment): Observable<any> {
     console.log('Creating appointment:', appointment);
-    return this.http
-      .post<any>(this._apiUrl, appointment)
-      .pipe(tap((response) => console.log('Appointment created:', response)));
+    return this.http.post<any>(this._apiUrl, appointment);
+  }
+
+  updateAppointment(id: string, appointment: Appointment): Observable<any> {
+    return this.http.put<any>(`${this._apiUrl}/${id}`, appointment);
+  }
+
+  deleteAppointment(id: string): Observable<any> {
+    return this.http.delete<any>(`${this._apiUrl}/${id}`);
   }
 }

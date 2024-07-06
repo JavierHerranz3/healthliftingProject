@@ -10,7 +10,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { AthleteDetailComponent } from './pages/athlete-detail/athlete-detail.component';
 import { AthleteListComponent } from './pages/athlete-list/athlete-list.component';
 import { AthleteCreateComponent } from './components/athlete-create/athlete-create.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -18,6 +17,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatListModule } from '@angular/material/list';
+import { AthleteDetailComponent } from './pages/athlete-detail/athlete-detail.component';
 
 @NgModule({
   declarations: [

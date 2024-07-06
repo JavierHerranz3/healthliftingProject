@@ -5,7 +5,10 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AppointmentService } from '../../service/appointment.service';
 import { Appointment } from '../../../../core/models/appointment.model';
-import { trainningType } from '../../../../core/models/trainningSheet.model';
+import {
+  FriendlyTrainingType,
+  trainningType,
+} from '../../../../core/models/trainningSheet.model';
 
 @Component({
   selector: 'app-appointment-list',
@@ -15,14 +18,15 @@ import { trainningType } from '../../../../core/models/trainningSheet.model';
 export class AppointmentListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'date',
-    'time',
     'athlete',
+    'athleteSurname',
     'coach',
+    'coachSurname',
     'trainingType',
   ];
   dataSource = new MatTableDataSource<Appointment>();
   searchControl = new FormControl('');
-  trainingTypes: string[] = Object.values(trainningType);
+  trainingTypes: string[] = Object.values(FriendlyTrainingType);
   trainingTypeControl = new FormControl('');
   nameControl = new FormControl('');
 
@@ -43,11 +47,15 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
   }
 
   loadAppointments(): void {
-    this.appointmentService
-      .getAppointments()
-      .subscribe((appointments: Appointment[]) => {
-        this.dataSource.data = appointments;
-      });
+    this.appointmentService.getAppointments().subscribe(
+      (appointments: any) => {
+        console.log('Fetched appointments:', appointments);
+        this.dataSource.data = appointments.content; // Ajuste aquí para asignar la propiedad 'content'
+      },
+      (error) => {
+        console.error('Error fetching appointments:', error);
+      }
+    );
   }
 
   applyFilter(): void {
@@ -56,12 +64,14 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
     const name = this.nameControl.value?.trim().toLowerCase() || '';
 
     this.dataSource.filterPredicate = (data: Appointment, filter: string) => {
-      const matchesTrainingType = data.trainingType
+      const matchesTrainingType = data.trainingTypeRecord
         .toLowerCase()
         .includes(trainingType);
       const matchesName =
         data.athleteName.toLowerCase().includes(name) ||
-        data.coachName.toLowerCase().includes(name);
+        data.athleteSurname.toLowerCase().includes(name) ||
+        data.coachName.toLowerCase().includes(name) ||
+        data.coachSurname.toLowerCase().includes(name);
       return matchesTrainingType && matchesName;
     };
     this.dataSource.filter = `${trainingType} ${name}`;

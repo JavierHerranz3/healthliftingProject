@@ -1,1 +1,77 @@
-<p>appointment-detail works!</p>
+<div class="container mx-auto p-4">
+    <div class="flex justify-end mb-4">
+      <button class="bg-blue-500 text-white px-4 py-2 rounded mr-2" *ngIf="!isEditing" (click)="toggleEdit()">Modificar Cita</button>
+      <button class="bg-red-500 text-white px-4 py-2 rounded" (click)="confirmDelete()">Eliminar Cita</button>
+    </div>
+  
+    <div class="max-w-3xl mx-auto mt-8">
+      <!-- Appointment Details -->
+      <div class="bg-white shadow-md rounded-lg p-6 mt-4" *ngIf="!isEditing">
+        <div class="mb-4">
+          <p class="text-lg font-bold mb-2">Detalles de la Cita</p>
+          <div class="grid grid-cols-2 gap-x-8">
+            <p class="text-gray-600">Fecha:</p>
+            <p>{{ appointment.date | date : "medium" }}</p>
+            <p class="text-gray-600">Tipo de Entrenamiento:</p>
+            <p>{{ appointment.trainingTypeRecord }}</p>
+          </div>
+        </div>
+  
+        <!-- Athlete Details -->
+        <div class="mb-4">
+          <p class="text-lg font-bold mb-2">Datos del Atleta</p>
+          <div class="grid grid-cols-2 gap-x-8">
+            <p class="text-gray-600">Nombre:</p>
+            <p>{{ athlete?.personalInformation?.name }}</p>
+            <p class="text-gray-600">Apellido:</p>
+            <p>{{ athlete?.personalInformation?.surname }}</p>
+            <p class="text-gray-600">DNI:</p>
+            <p>{{ athlete?.personalInformation?.document }}</p>
+          </div>
+        </div>
+  
+        <!-- Coach Details -->
+        <div>
+          <p class="text-lg font-bold mb-2">Datos del Entrenador</p>
+          <div class="grid grid-cols-2 gap-x-8">
+            <p class="text-gray-600">Nombre:</p>
+            <p>{{ coach?.personalInformation?.name }}</p>
+            <p class="text-gray-600">Apellido:</p>
+            <p>{{ coach?.personalInformation?.surname }}</p>
+            <p class="text-gray-600">DNI:</p>
+            <p>{{ coach?.personalInformation?.document }}</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Edit Appointment Form -->
+      <div class="bg-white shadow-md rounded-lg p-6 mt-4" *ngIf="isEditing">
+        <form (ngSubmit)="saveChanges()">
+          <div class="mb-4">
+            <label for="date" class="block text-gray-700">Fecha</label>
+            <input id="date" [(ngModel)]="appointment.date" name="date" type="date" class="mt-1 p-2 border rounded w-full">
+          </div>
+  
+          <div class="mb-4">
+            <label for="trainingTypeRecord" class="block text-gray-700">Tipo de Entrenamiento</label>
+            <select id="trainingTypeRecord" [(ngModel)]="appointment.trainingTypeRecord" name="trainingTypeRecord" class="mt-1 p-2 border rounded w-full">
+              <option *ngFor="let type of trainingTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+  
+          <div class="mb-4">
+            <label for="coach" class="block text-gray-700">Entrenador</label>
+            <select id="coach" [(ngModel)]="appointment.coachId" name="coach" class="mt-1 p-2 border rounded w-full">
+              <option *ngFor="let coach of coaches" [value]="coach.id">{{ coach.personalInformation.name }} {{ coach.personalInformation.surname }}</option>
+            </select>
+          </div>
+  
+          <div class="flex justify-end">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mr-2">Guardar</button>
+            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded" (click)="toggleEdit()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
