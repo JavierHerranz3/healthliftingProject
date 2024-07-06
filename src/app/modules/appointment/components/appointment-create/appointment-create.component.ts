@@ -1,7 +1,12 @@
 // src/app/modules/appointment/components/appointment-create/appointment-create.component.ts
 
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Athlete } from '../../../../core/models/athlete.model';
@@ -120,6 +125,7 @@ export class AppointmentCreateComponent implements OnInit {
 
       // Crear el objeto de la nueva cita
       const newAppointment = {
+        id: formValues.id,
         date: combinedDateTime,
         coachId: formValues.coachId,
         coachName: formValues.coachName,

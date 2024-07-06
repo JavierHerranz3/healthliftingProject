@@ -8,8 +8,8 @@ import { Appointment } from '../../../../core/models/appointment.model';
 import {
   FriendlyTrainingType,
   TrainingTypeRecordMap,
-  trainningType,
 } from '../../../../core/models/trainningSheet.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-appointment-list',
@@ -24,22 +24,24 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
     'coach',
     'coachSurname',
     'trainingType',
+    'details',
   ];
   dataSource = new MatTableDataSource<Appointment>();
   searchControl = new FormControl('');
   trainingTypes: string[] = Object.values(FriendlyTrainingType);
   trainingTypeControl = new FormControl('');
-  nameControl = new FormControl('');
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private appointmentService: AppointmentService) {}
+  constructor(
+    private appointmentService: AppointmentService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadAppointments();
     this.trainingTypeControl.valueChanges.subscribe(() => this.applyFilter());
-    this.nameControl.valueChanges.subscribe(() => this.applyFilter());
   }
 
   ngAfterViewInit(): void {
@@ -51,7 +53,12 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
     this.appointmentService.getAppointments().subscribe(
       (appointments: any) => {
         console.log('Fetched appointments:', appointments);
-        this.dataSource.data = appointments.content; // Ajuste aquí para asignar la propiedad 'content'
+        this.dataSource.data = appointments.content.map(
+          (appointment: Appointment) => {
+            console.log('Appointment:', appointment);
+            return appointment;
+          }
+        );
       },
       (error) => {
         console.error('Error fetching appointments:', error);
@@ -63,22 +70,25 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
     const trainingTypeFriendly = this.trainingTypeControl.value?.trim() || '';
     const trainingType =
       TrainingTypeRecordMap[trainingTypeFriendly as FriendlyTrainingType] || '';
-    const name = this.nameControl.value?.trim().toLowerCase() || '';
 
     this.dataSource.filterPredicate = (data: Appointment, filter: string) => {
       const matchesTrainingType = data.trainingTypeRecord
         .toLowerCase()
         .includes(trainingType.toLowerCase());
-      const matchesName =
-        data.athleteName.toLowerCase().includes(name) ||
-        data.athleteSurname.toLowerCase().includes(name) ||
-        data.coachName.toLowerCase().includes(name) ||
-        data.coachSurname.toLowerCase().includes(name);
-      return matchesTrainingType && matchesName;
+      return matchesTrainingType;
     };
-    this.dataSource.filter = `${trainingType} ${name}`;
+    this.dataSource.filter = trainingType;
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
+    }
+  }
+
+  onDetailsButtonClick(id: string): void {
+    console.log('Appointment ID:', id);
+    if (id) {
+      this.router.navigate(['/appointments/detail', id]);
+    } else {
+      console.error('Invalid appointment ID:', id);
     }
   }
 }

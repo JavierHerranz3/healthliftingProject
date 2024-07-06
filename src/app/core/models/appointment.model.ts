@@ -1,5 +1,5 @@
 export interface Appointment {
-  id?: string;
+  id: string;
   date: string;
   athleteId: string;
   athleteName: string;
