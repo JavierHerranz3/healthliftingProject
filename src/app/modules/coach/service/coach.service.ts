@@ -19,6 +19,10 @@ export class CoachService {
     return this._http.get<Page<Coach>>(this._apiUrl, { params });
   }
 
+  searchCoachByDocument(document: string): Observable<Coach> {
+    return this._http.get<Coach>(`${this._apiUrl}/list/${document}`);
+  }
+
   getAllCoaches(): Observable<Coach[]> {
     return this._http.get<Coach[]>(this._apiUrl);
   }

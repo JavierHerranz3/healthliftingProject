@@ -19,6 +19,8 @@ export class CoachListComponent implements OnInit {
   dataSource = new MatTableDataSource<Coach>();
   searchControl = new FormControl('');
   filteredCoaches: Coach[] = [];
+  coaches: Coach[] = [];
+  public errorMessage: string | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -47,6 +49,28 @@ export class CoachListComponent implements OnInit {
     });
   }
 
+  searchCoachByDocument(): void {
+    const document = this.searchControl.value;
+    if (document) {
+      this.coachService.searchCoachByDocument(document).subscribe({
+        next: (coach: Coach) => {
+          this.coaches = [coach];
+          this.dataSource.data = this.coaches;
+          this.errorMessage = null;
+        },
+        error: (err) => {
+          console.error('Error fetching athlete by document', err);
+          this.errorMessage =
+            'No se encontró un atleta con el documento proporcionado.';
+        },
+      });
+    } else {
+      this.errorMessage = 'Por favor, ingrese un documento válido.';
+    }
+  }
+  public onPageChange(event: any): void {
+    this.getCoaches(event.pageIndex, event.pageSize);
+  }
   goToDetail(coach: Coach): void {
     if (coach && coach.id) {
       this.router.navigate([`/coaches/detail/${coach.id}`]);
