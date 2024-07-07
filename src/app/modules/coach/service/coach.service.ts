@@ -19,6 +19,9 @@ export class CoachService {
     return this._http.get<Page<Coach>>(this._apiUrl, { params });
   }
 
+  getAllCoaches(): Observable<Coach[]> {
+    return this._http.get<Coach[]>(this._apiUrl);
+  }
   getCoachById(id: string): Observable<Coach> {
     return this._http.get<Coach>(`${this._apiUrl}/${id}`);
   }

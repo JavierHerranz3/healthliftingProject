@@ -7,11 +7,14 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 import { AppointmentService } from '../../service/appointment.service';
 import { AthleteService } from '../../../athlete/service/athlete.service';
 import { CoachService } from '../../../coach/service/coach.service';
+import { Page } from '../../../../core/models/page.model';
 import {
   FriendlyTrainingType,
   TrainingTypeRecordMap,
 } from '../../../../core/models/trainningType.model';
 import moment from 'moment-timezone';
+import { Athlete } from '../../../../core/models/athlete.model';
+import { Coach } from '../../../../core/models/coach.model';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -20,9 +23,10 @@ import moment from 'moment-timezone';
 })
 export class AppointmentDetailComponent implements OnInit {
   appointment: any = {}; // Inicializar como objeto vacío para evitar undefined
-  athlete: any;
-  coach: any;
-  coaches: any[] = [];
+  athlete: Athlete = {} as Athlete; // Inicialización con valor por defecto
+  coach: Coach = {} as Coach; // Inicialización con valor por defecto
+  coaches: Coach[] = [];
+  athletes: Athlete[] = [];
   trainingTypes: string[] = Object.values(FriendlyTrainingType);
   id: string = '';
   isEditing = false;
@@ -41,7 +45,8 @@ export class AppointmentDetailComponent implements OnInit {
     this.appointmentForm = this.fb.group({
       date: ['', Validators.required],
       time: ['', Validators.required],
-      trainingType: ['', Validators.required],
+      coachId: ['', Validators.required],
+      trainingTypeRecord: ['', Validators.required],
     });
   }
 
@@ -50,6 +55,36 @@ export class AppointmentDetailComponent implements OnInit {
       this.id = params['id'];
       this.getAppointmentById(this.id);
     });
+    this.loadCoaches();
+    this.loadAthletes();
+  }
+
+  loadCoaches() {
+    this.coachService.getCoaches(0, 20).subscribe({
+      next: (coachPage: Page<Coach>) => {
+        if (Array.isArray(coachPage.content)) {
+          this.coaches = coachPage.content;
+        } else {
+          console.error('Expected an array for coaches:', coachPage.content);
+        }
+        console.log('Coaches loaded:', this.coaches);
+      },
+      error: (err) => console.error('Error fetching coaches', err),
+    });
+  }
+
+  loadAthletes() {
+    this.athleteService.getAthletes(0, 20).subscribe({
+      next: (athletePage: Page<Athlete>) => {
+        if (Array.isArray(athletePage.content)) {
+          this.athletes = athletePage.content;
+        } else {
+          console.error('Expected an array for athletes:', athletePage.content);
+        }
+        console.log('Athletes loaded:', this.athletes);
+      },
+      error: (err) => console.error('Error fetching athletes', err),
+    });
   }
 
   getAppointmentById(id: string): void {
@@ -57,7 +92,6 @@ export class AppointmentDetailComponent implements OnInit {
       next: (appointment) => {
         this.appointment = appointment;
         this.getAthleteById(appointment.athleteId);
-        this.getCoachById(appointment.coachId);
         this.populateForm(); // Populate form with existing appointment data
       },
       error: (err) => console.error('Error fetching appointment', err),
@@ -71,11 +105,22 @@ export class AppointmentDetailComponent implements OnInit {
     });
   }
 
-  getCoachById(id: string): void {
-    this.coachService.getCoachById(id).subscribe({
-      next: (coach) => (this.coach = coach),
-      error: (err) => console.error('Error fetching coach', err),
-    });
+  onCoachSelected(event: any) {
+    const selectedCoachId = event.value;
+    const selectedCoach = this.coaches.find(
+      (coach) => coach.id === selectedCoachId
+    );
+
+    if (selectedCoach) {
+      this.appointmentForm.patchValue({
+        coachId: selectedCoach.id,
+        coachName: selectedCoach.personalInformation.name,
+        coachSurname: selectedCoach.personalInformation.surname,
+        coachDocument: selectedCoach.personalInformation.document,
+      });
+      console.log('Selected coach ID:', selectedCoach.id);
+      console.log('Form value after selection:', this.appointmentForm.value);
+    }
   }
 
   toggleEdit(): void {
@@ -86,34 +131,55 @@ export class AppointmentDetailComponent implements OnInit {
     if (this.appointmentForm.valid) {
       const formValues = this.appointmentForm.value;
       const combinedDateTime = moment(
-        formValues.date + ' ' + formValues.time,
-        'YYYY-MM-DD HH:mm'
-      ).toISOString(true); // Adjusted for the desired format with timezone
+        `${formValues.date}T${formValues.time}`,
+        'YYYY-MM-DDTHH:mm'
+      ).format('YYYY-MM-DDTHH:mm:ss');
+
+      const trainingTypeRecord =
+        TrainingTypeRecordMap[
+          formValues.trainingTypeRecord as FriendlyTrainingType
+        ];
+
+      const selectedCoach = this.coaches.find(
+        (coach) => coach.id === formValues.coachId
+      );
 
       const updatedAppointment = {
         ...this.appointment,
         date: combinedDateTime,
-        trainingTypeRecord:
-          TrainingTypeRecordMap[
-            formValues.trainingType as FriendlyTrainingType
-          ],
+        coachId: formValues.coachId,
+        coachName: selectedCoach
+          ? selectedCoach.personalInformation.name
+          : undefined,
+        coachSurname: selectedCoach
+          ? selectedCoach.personalInformation.surname
+          : undefined,
+        coachDocument: selectedCoach
+          ? selectedCoach.personalInformation.document
+          : undefined,
+        trainingTypeRecord: trainingTypeRecord,
       };
+
+      console.log('Form Values:', formValues);
+      console.log('Updated Appointment:', updatedAppointment);
 
       this.appointmentService
         .updateAppointment(this.id, updatedAppointment)
         .subscribe({
           next: () => {
+            console.log('Respuesta exitosa del backend');
             this.snackBar.open('Cita actualizada correctamente', 'Cerrar', {
               duration: 3000,
             });
             this.toggleEdit();
-            this.getAppointmentById(this.id); // Refrescar los datos de la cita
+            this.getAppointmentById(this.id);
           },
-          error: (err) => console.error('Error updating appointment', err),
+          error: (err) => console.error('Error actualizando cita', err),
         });
+    } else {
+      console.error('Formulario no válido');
     }
   }
-
   populateForm(): void {
     if (this.appointment && this.appointment.date) {
       const date = moment(this.appointment.date).format('YYYY-MM-DD');
@@ -121,12 +187,8 @@ export class AppointmentDetailComponent implements OnInit {
       this.appointmentForm.patchValue({
         date: date,
         time: time,
-        trainingType: Object.keys(FriendlyTrainingType).find(
-          (key) =>
-            TrainingTypeRecordMap[
-              FriendlyTrainingType[key as keyof typeof FriendlyTrainingType]
-            ] === this.appointment.trainingTypeRecord
-        ),
+        coachId: this.appointment.coachId,
+        trainingTypeRecord: this.appointment.trainingTypeRecord,
       });
     }
   }
@@ -152,9 +214,10 @@ export class AppointmentDetailComponent implements OnInit {
         });
         this.router.navigate(['/appointments/list']);
       },
-      error: (err) => console.error('Error deleting appointment', err),
+      error: (err) => console.error('Error eliminando cita', err),
     });
   }
+
   navigateToCreateTrainingSheet(): void {
     this.router.navigate(['/training-sheets/create-training-sheet'], {
       queryParams: {
