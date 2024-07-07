@@ -31,7 +31,7 @@ export class AthleteListComponent implements OnInit {
   constructor(private router: Router, private athleteService: AthleteService) {}
 
   ngOnInit(): void {
-    this.getAthletes(0, 20);
+    this.getAthletes(0, 5);
     this.dataSource.paginator = this.paginator;
   }
 
@@ -58,18 +58,28 @@ export class AthleteListComponent implements OnInit {
     if (document) {
       this.athleteService.searchAthleteByDocument(document).subscribe({
         next: (athlete: Athlete) => {
-          this.athletes = [athlete];
-          this.dataSource.data = this.athletes;
-          this.errorMessage = null;
+          if (athlete) {
+            this.athletes = [athlete];
+            this.dataSource.data = this.athletes;
+            this.errorMessage = null;
+          } else {
+            this.errorMessage = 'No existe atleta con ese documento.';
+            this.searchControl.setValue('');
+            this.getAthletes(0, 5);
+          }
         },
         error: (err) => {
           console.error('Error fetching athlete by document', err);
           this.errorMessage =
             'No se encontró un atleta con el documento proporcionado.';
+          this.searchControl.setValue('');
+          this.getAthletes(0, 5);
         },
       });
     } else {
       this.errorMessage = 'Por favor, ingrese un documento válido.';
+      this.searchControl.setValue('');
+      this.getAthletes(0, 5);
     }
   }
 

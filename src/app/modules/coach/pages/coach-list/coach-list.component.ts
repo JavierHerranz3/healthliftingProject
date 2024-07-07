@@ -27,7 +27,7 @@ export class CoachListComponent implements OnInit {
   constructor(private coachService: CoachService, private router: Router) {}
 
   ngOnInit(): void {
-    this.getCoaches(0, 20);
+    this.getCoaches(0, 5);
     this.dataSource.paginator = this.paginator;
   }
 
@@ -54,18 +54,27 @@ export class CoachListComponent implements OnInit {
     if (document) {
       this.coachService.searchCoachByDocument(document).subscribe({
         next: (coach: Coach) => {
-          this.coaches = [coach];
-          this.dataSource.data = this.coaches;
-          this.errorMessage = null;
+          if (coach) {
+            this.coaches = [coach];
+            this.dataSource.data = this.coaches;
+            this.errorMessage = null;
+          } else {
+            this.errorMessage = 'No existe entrenador con ese documento.';
+            this.searchControl.setValue('');
+            this.getCoaches(0, 20);
+          }
         },
         error: (err) => {
-          console.error('Error fetching athlete by document', err);
-          this.errorMessage =
-            'No se encontró un atleta con el documento proporcionado.';
+          console.error('Error fetching coach by document', err);
+          this.errorMessage = 'No existe entrenador con ese documento.';
+          this.searchControl.setValue('');
+          this.getCoaches(0, 20);
         },
       });
     } else {
       this.errorMessage = 'Por favor, ingrese un documento válido.';
+      this.searchControl.setValue('');
+      this.getCoaches(0, 20);
     }
   }
   public onPageChange(event: any): void {
