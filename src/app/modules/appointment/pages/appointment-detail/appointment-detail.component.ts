@@ -130,10 +130,12 @@ export class AppointmentDetailComponent implements OnInit {
   saveChanges(): void {
     if (this.appointmentForm.valid) {
       const formValues = this.appointmentForm.value;
-      const combinedDateTime = moment(
-        `${formValues.date}T${formValues.time}`,
-        'YYYY-MM-DDTHH:mm'
-      ).format('YYYY-MM-DDTHH:mm:ss');
+      const combinedDateTime = moment(formValues.date)
+        .set({
+          hour: moment(formValues.time, 'HH:mm').hour(),
+          minute: moment(formValues.time, 'HH:mm').minute(),
+        })
+        .toISOString(); // Esto generará el formato 2021-01-14T03:07:22.000Z automáticamente
 
       const trainingTypeRecord =
         TrainingTypeRecordMap[
