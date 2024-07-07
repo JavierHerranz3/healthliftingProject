@@ -15,6 +15,7 @@ import { AppointmentRoutingModule } from './appointment-routing.module';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { SharedModule } from '../../shared/components/shared.module';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     AppointmentRoutingModule,
     MatAutocompleteModule,
     FormsModule,
+    SharedModule,
   ],
 })
 export class AppointmentsModule {}

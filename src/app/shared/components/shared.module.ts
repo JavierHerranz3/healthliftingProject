@@ -12,12 +12,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { AthleteCreationContainerComponent } from './buttons/athlete-creation-container/athlete-creation-container.component';
 import { AppointmentCreationContainerComponent } from './buttons/appointment-creation-container/appointment-creation-container.component';
 import { CoachCreationContainerComponent } from './buttons/coach-creation-container/coach-creation-container.component';
+import { BackButtonComponent } from './buttons/back-button/back-button.component';
 
 @NgModule({
   declarations: [
     AthleteCreationContainerComponent,
     CoachCreationContainerComponent,
     AppointmentCreationContainerComponent,
+    BackButtonComponent,
   ],
   imports: [
     MatSelectModule,
@@ -36,6 +38,7 @@ import { CoachCreationContainerComponent } from './buttons/coach-creation-contai
     AppointmentCreationContainerComponent,
     AthleteCreationContainerComponent,
     CoachCreationContainerComponent,
+    BackButtonComponent,
   ],
 })
 export class SharedModule {}

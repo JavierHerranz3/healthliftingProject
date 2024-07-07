@@ -1,5 +1,5 @@
 <div class="flex flex-col items-center justify-start min-h-screen p-4">
-  <div class="w-full max-w-2xl">
+  <div class="w-full max-w-4xl">
     <!-- Buscar por documento -->
     <div class="flex items-center space-x-4 mb-4 w-full">
       <div class="flex-grow-0 w-1/2">
@@ -50,11 +50,16 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 cursor-pointer" (click)="goToDetail(row)"></tr>
       </table>
+
+      <!-- Paginador dentro de la tabla, alineado a la derecha -->
+      <div class="flex justify-end mt-4">
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPageChange($event)"></mat-paginator>
+      </div>
     </div>
 
-    <!-- Paginador -->
-    <div class="mt-4">
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPageChange($event)"></mat-paginator>
+    <!-- Botón Back justo debajo de la tabla, alineado a la derecha -->
+    <div class="flex justify-end mt-4">
+      <app-back-button></app-back-button>
     </div>
   </div>
 </div>

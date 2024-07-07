@@ -18,6 +18,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatListModule } from '@angular/material/list';
 import { AthleteDetailComponent } from './pages/athlete-detail/athlete-detail.component';
+import { SharedModule } from '../../shared/components/shared.module';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { AthleteDetailComponent } from './pages/athlete-detail/athlete-detail.co
     MatProgressSpinnerModule,
     MatSortModule,
     MatListModule,
+    SharedModule,
   ],
 })
 export class AthleteModule {}

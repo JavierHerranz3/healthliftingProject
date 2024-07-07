@@ -18,6 +18,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatOptionModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CoachCreateComponent } from './components/coach-create/coach-create.component';
+import { SharedModule } from '../../shared/components/shared.module';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { CoachCreateComponent } from './components/coach-create/coach-create.com
     MatOptionModule,
     MatIconModule,
     MatButtonModule,
+    SharedModule,
   ],
 })
 export class CoachModule {}
