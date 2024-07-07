@@ -30,10 +30,16 @@ export class AppointmentService {
   getAthleteById(athleteId: string): Observable<Athlete> {
     return this.http.get<Athlete>(`${this._apiUrl}/athletes/${athleteId}`);
   }
-
-  getCoachById(coachId: string): Observable<Coach> {
-    return this.http.get<Coach>(`${this._apiUrl}/coaches/${coachId}`);
+  getAppointmentsByCoachId(coachId: string): Observable<Appointment[]> {
+    return this.http
+      .get<Appointment[]>(`${this._apiUrl}/coaches/${coachId}`)
+      .pipe(
+        tap((appointments) =>
+          console.log('Fetched appointments:', appointments)
+        )
+      );
   }
+
   createAppointment(appointment: Appointment): Observable<any> {
     console.log('Creating appointment:', appointment);
     return this.http.post<any>(this._apiUrl, appointment);

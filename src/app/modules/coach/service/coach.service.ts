@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Coach } from '../../../core/models/coach.model';
 import { apiUrl } from '../../../enviroment';
@@ -22,10 +22,9 @@ export class CoachService {
   getCoachById(id: string): Observable<Coach> {
     return this._http.get<Coach>(`${this._apiUrl}/${id}`);
   }
-
-  getAppointmentsByCoachId(coachId: string): Observable<Appointment[]> {
+  getAppointmentsByCoachId(id: string): Observable<Appointment[]> {
     return this._http.get<Appointment[]>(
-      `${this._apiUrl}/${coachId}/appointments`
+      `${this._apiUrl}/appointments/coaches/${id}`
     );
   }
 

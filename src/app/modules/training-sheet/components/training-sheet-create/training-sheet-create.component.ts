@@ -6,10 +6,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Appointment } from '../../../../core/models/appointment.model'; // Ajusta la ruta según tu estructura de proyecto
 
 import { AppointmentService } from '../../../appointment/service/appointment.service';
-import {
-  FriendlyTrainingType,
-  TrainingTypeRecordMap,
-} from '../../../../core/models/trainningType.model';
+
+import { TrainingSheet } from '../../../../core/models/trainingSheet.model';
 
 @Component({
   selector: 'app-training-sheet-create',
@@ -22,15 +20,7 @@ export class TrainingSheetCreateComponent implements OnInit {
   coachName = '';
   athleteName = '';
   appointmentDate = '';
-  trainingType = '';
-
-  // Mapa de tipos de entrenamiento
-  trainingTypeMap: { [key: string]: string } = {
-    HIIT: 'High-Intensity Interval Training',
-    YOGA: 'Yoga',
-    PILATES: 'Pilates',
-    // Agrega aquí los otros tipos de entrenamiento con sus traducciones correspondientes
-  };
+  trainingTypeRecord = ''; // Variable para almacenar el tipo de entrenamiento
 
   constructor(
     private fb: FormBuilder,
@@ -44,7 +34,7 @@ export class TrainingSheetCreateComponent implements OnInit {
   ngOnInit(): void {
     this.trainingSheetForm = this.fb.group({
       trainingType: [{ value: '', disabled: true }, Validators.required],
-      observations: [''],
+      observations: ['', Validators.required],
       coachId: ['', Validators.required],
       athleteId: ['', Validators.required],
       appointmentId: ['', Validators.required],
@@ -54,6 +44,7 @@ export class TrainingSheetCreateComponent implements OnInit {
     });
 
     this.route.queryParams.subscribe((params) => {
+      console.log('Query Params:', params);
       if (params['appointmentId']) {
         this.trainingSheetForm.patchValue({
           appointmentId: params['appointmentId'],
@@ -63,6 +54,11 @@ export class TrainingSheetCreateComponent implements OnInit {
         });
 
         this.loadAppointmentDetails(params['appointmentId']);
+
+        // Redirigir a la ruta deseada sin parámetros de consulta
+        this.router.navigate(['/training-sheets/create-training-sheet'], {
+          replaceUrl: true,
+        });
       }
     });
   }
@@ -71,46 +67,71 @@ export class TrainingSheetCreateComponent implements OnInit {
     this.appointmentService
       .getAppointmentById(appointmentId)
       .subscribe((appointment: Appointment) => {
+        console.log('Appointment Details:', appointment);
         this.coachName = `${appointment.coachName} ${appointment.coachSurname}`;
         this.athleteName = `${appointment.athleteName} ${appointment.athleteSurname}`;
         this.appointmentDate = appointment.date;
-        this.trainingType =
-          this.trainingTypeMap[
-            appointment.trainingTypeRecord as FriendlyTrainingType
-          ] || appointment.trainingTypeRecord;
+        this.trainingTypeRecord = appointment.trainingTypeRecord; // Asignar el valor de trainingTypeRecord
 
+        // Parchar coachId y otros detalles en el formulario
         this.trainingSheetForm.patchValue({
           coachName: this.coachName,
           athleteName: this.athleteName,
           appointmentDate: this.appointmentDate,
-          trainingType: this.trainingType,
+          trainingType: this.trainingTypeRecord, // Mostrar el tipo de entrenamiento en el formulario
+          coachId: appointment.coachId, // Asignar coachId directamente desde los detalles de la cita
         });
       });
   }
 
   submitForm(): void {
+    console.log('submitForm called'); // Log para verificar si la función es llamada
     if (this.trainingSheetForm.valid) {
-      const formValues = this.trainingSheetForm.getRawValue();
-      console.log('Form Values:', formValues); // Log the form values to the console
-      this.createTrainingSheet(formValues);
+      const formValues = this.trainingSheetForm.value;
+      console.log('Form Values:', formValues); // Log para verificar los valores del formulario
+      const newTrainingSheet: TrainingSheet = {
+        id: '',
+        trainingTypeRecord: this.trainingTypeRecord, // Añadir el tipo de entrenamiento
+        observations: formValues.observations,
+        coachId: formValues.coachId,
+        athleteId: formValues.athleteId,
+        appointmentId: formValues.appointmentId,
+      };
+      this.createTrainingSheet(newTrainingSheet);
+    } else {
+      console.error('Formulario no válido', this.trainingSheetForm); // Log para verificar si el formulario es inválido
     }
   }
 
-  private createTrainingSheet(trainingSheet: any): void {
+  private createTrainingSheet(trainingSheet: TrainingSheet): void {
     this.isLoading = true;
     this.trainingSheetService.createTrainingSheet(trainingSheet).subscribe({
-      next: () => {
+      next: (createdTrainingSheet: TrainingSheet) => {
         this.isLoading = false;
-        this.snackBar.open(
-          'Ficha de entrenamiento creada correctamente',
-          'Cerrar',
-          {
-            duration: 3000,
-          }
+        console.log(
+          'Training sheet created successfully:',
+          createdTrainingSheet
         );
-        this.router.navigate(['/training-sheets']);
+        if (createdTrainingSheet && createdTrainingSheet.id) {
+          this.snackBar.open(
+            'Ficha de entrenamiento creada correctamente',
+            'Cerrar',
+            {
+              duration: 3000,
+            }
+          );
+          this.router.navigate([
+            '/training-sheets/detail',
+            createdTrainingSheet.id,
+          ]);
+        } else {
+          console.error(
+            'El objeto creado no tiene un ID:',
+            createdTrainingSheet
+          );
+        }
       },
-      error: (error) => {
+      error: (error: any) => {
         this.isLoading = false;
         console.error('Error al crear la ficha de entrenamiento:', error);
         this.snackBar.open(

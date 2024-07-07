@@ -1,6 +1,6 @@
 export interface TrainingSheet {
   id: string;
-  trainingType: string;
+  trainingTypeRecord: string;
   observations: string;
   coachId: string;
   athleteId: string;
