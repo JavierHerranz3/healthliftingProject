@@ -38,7 +38,9 @@
 
   <div class="mt-6 appointments" *ngIf="coach">
     <h2 class="text-xl font-bold mb-4">Citas del Entrenador</h2>
-    <button class="bg-green-500 text-white px-4 py-2 rounded" (click)="viewAppointments()">Ver Citas</button>
+    <!-- Botón Ver Citas -->
+<button mat-raised-button color="primary" (click)="goToAppointments(coach)">Ver Citas</button>
+
     <table class="min-w-full bg-white mat-elevation-z8" *ngIf="appointmentsDataSource.data.length">
       <thead>
         <tr>

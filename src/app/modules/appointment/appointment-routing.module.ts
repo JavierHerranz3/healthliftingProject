@@ -9,6 +9,7 @@ const routes: Routes = [
   { path: 'create-appointment', component: AppointmentCreateComponent },
   { path: 'detail/:id', component: AppointmentDetailComponent },
   { path: 'list', component: AppointmentListComponent },
+  { path: 'appointments/list/:coachId', component: AppointmentListComponent },
 ];
 
 @NgModule({

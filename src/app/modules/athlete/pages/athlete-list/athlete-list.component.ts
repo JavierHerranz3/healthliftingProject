@@ -70,8 +70,7 @@ export class AthleteListComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error fetching athlete by document', err);
-          this.errorMessage =
-            'No se encontró un atleta con el documento proporcionado.';
+          this.errorMessage = 'No existe atleta con ese documento';
           this.searchControl.setValue('');
           this.getAthletes(0, 5);
         },

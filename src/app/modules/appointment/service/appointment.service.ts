@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { AthleteService } from '../../athlete/service/athlete.service';
+import { AthleteService, Page } from '../../athlete/service/athlete.service';
 import { CoachService } from '../../coach/service/coach.service';
 import { Appointment } from '../../../core/models/appointment.model';
 import { apiUrl } from '../../../enviroment';
@@ -30,14 +30,14 @@ export class AppointmentService {
   getAthleteById(athleteId: string): Observable<Athlete> {
     return this.http.get<Athlete>(`${this._apiUrl}/athletes/${athleteId}`);
   }
-  getAppointmentsByCoachId(coachId: string): Observable<Appointment[]> {
-    return this.http
-      .get<Appointment[]>(`${this._apiUrl}/coaches/${coachId}`)
-      .pipe(
-        tap((appointments) =>
-          console.log('Fetched appointments:', appointments)
-        )
-      );
+  getAppointmentsByCoachId(
+    coachId: string,
+    page: number,
+    size: number
+  ): Observable<Page<Appointment>> {
+    return this.http.get<Page<Appointment>>(
+      `${this._apiUrl}/list/coaches/${coachId}?page=${page}&size=${size}`
+    );
   }
 
   createAppointment(appointment: Appointment): Observable<any> {

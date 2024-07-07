@@ -9,7 +9,7 @@ import {
   FriendlyTrainingType,
   TrainingTypeRecordMap,
 } from '../../../../core/models/trainningType.model';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-appointment-list',

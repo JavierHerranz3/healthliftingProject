@@ -61,20 +61,20 @@ export class CoachListComponent implements OnInit {
           } else {
             this.errorMessage = 'No existe entrenador con ese documento.';
             this.searchControl.setValue('');
-            this.getCoaches(0, 20);
+            this.getCoaches(0, 5);
           }
         },
         error: (err) => {
           console.error('Error fetching coach by document', err);
           this.errorMessage = 'No existe entrenador con ese documento.';
           this.searchControl.setValue('');
-          this.getCoaches(0, 20);
+          this.getCoaches(0, 5);
         },
       });
     } else {
       this.errorMessage = 'Por favor, ingrese un documento válido.';
       this.searchControl.setValue('');
-      this.getCoaches(0, 20);
+      this.getCoaches(0, 5);
     }
   }
   public onPageChange(event: any): void {

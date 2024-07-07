@@ -135,9 +135,9 @@ export class CoachDetailComponent implements OnInit {
     this.toggleEdit();
   }
 
-  viewAppointments(): void {
-    this._routerNav.navigate(['/appointments/list'], {
-      queryParams: { coachId: this.id },
-    });
+  goToAppointments(coach: Coach): void {
+    if (coach && coach.id) {
+      this._routerNav.navigate([`/appointments/list/${coach.id}`]);
+    }
   }
 }
