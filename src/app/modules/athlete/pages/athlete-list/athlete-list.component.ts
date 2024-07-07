@@ -22,7 +22,7 @@ export class AthleteListComponent implements OnInit {
     'document',
   ];
   public searchControl = new FormControl();
-  filteredAthletes: Athlete[] = [];
+  athletes: Athlete[] = [];
 
   public errorMessage: string | null = null;
 
@@ -56,21 +56,20 @@ export class AthleteListComponent implements OnInit {
   searchAthleteByDocument(): void {
     const document = this.searchControl.value;
     if (document) {
-      this.athleteService.getAthleteByDocument(document).subscribe({
-        next: (athlete) => {
-          if (athlete && athlete.id) {
-            this.router.navigateByUrl(`/athlete/detail/${athlete.id}`);
-          } else {
-            this.errorMessage = 'No existe un atleta con ese documento';
-          }
+      this.athleteService.searchAthleteByDocument(document).subscribe({
+        next: (athlete: Athlete) => {
+          this.athletes = [athlete];
+          this.dataSource.data = this.athletes;
+          this.errorMessage = null;
         },
-        error: (error) => {
-          console.error('Error fetching athlete by document', error);
-          this.errorMessage = 'No existe un atleta con ese documento';
+        error: (err) => {
+          console.error('Error fetching athlete by document', err);
+          this.errorMessage =
+            'No se encontró un atleta con el documento proporcionado.';
         },
       });
     } else {
-      this.errorMessage = 'Por favor, ingrese un documento válido';
+      this.errorMessage = 'Por favor, ingrese un documento válido.';
     }
   }
 

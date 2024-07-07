@@ -19,10 +19,8 @@ export class AthleteService {
     return this._http.get<Page<Athlete>>(this._apiUrl, { params });
   }
 
-  getAthleteByDocument(document: string): Observable<Athlete> {
-    return this._http.get<Athlete>(`${this._apiUrl}/searchByDocument`, {
-      params: { document },
-    });
+  searchAthleteByDocument(document: string): Observable<Athlete> {
+    return this._http.get<Athlete>(`${this._apiUrl}/list/${document}`);
   }
 
   getAthleteById(id: string): Observable<Athlete> {
