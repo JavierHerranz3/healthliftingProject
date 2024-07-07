@@ -7,11 +7,11 @@
     <div class="bg-white p-6 rounded-lg shadow-md training-sheet-details" *ngIf="trainingSheet && !isEditing">
       <h2 class="text-xl font-bold mb-4">Detalles de la Ficha de Entrenamiento</h2>
       <div *ngIf="trainingSheet">
-        <p><strong>Tipo de Entrenamiento:</strong> {{ trainingSheet.trainingTypeRecord }}</p>
-        <p><strong>Observaciones:</strong> {{ trainingSheet.observations }}</p>
-        <p><strong>Nombre del Entrenador:</strong> {{ coachName }}</p>
-        <p><strong>Nombre del Atleta:</strong> {{ athleteName }}</p>
-        <p><strong>Fecha de la Cita:</strong> {{ appointmentDate | date }}</p>
+        <p class="text-gray-600"><strong>Tipo de Entrenamiento:</strong> {{ trainingSheet.trainingTypeRecord }}</p>
+        <p class="text-gray-600"><strong>Observaciones:</strong> {{ trainingSheet.observations }}</p>
+        <p class="text-gray-600"><strong>Nombre del Entrenador:</strong> {{ coachName }}</p>
+        <p class="text-gray-600"><strong>Nombre del Atleta:</strong> {{ athleteName }}</p>
+        <p class="text-gray-600"><strong>Fecha de la Cita:</strong> {{ appointmentDate | date }}</p>
       </div>
     </div>
   
@@ -20,7 +20,7 @@
       <form (ngSubmit)="saveChanges()">
         <div class="mb-4">
           <label for="trainingTypeRecord" class="block text-gray-700">Tipo de Entrenamiento</label>
-          <input id="trainingTypeRecord" [(ngModel)]="trainingSheet.trainingTypeRecord" name="trainingTypeRecord" class="mt-1 p-2 border rounded w-full" readonly>
+          <input id="trainingTypeRecord" [(ngModel)]="trainingSheet.trainingTypeRecord" name="trainingTypeRecord" class="mt-1 p-2 border rounded w-full bg-gray-100 cursor-not-allowed" readonly disabled>
         </div>
         <div class="mb-4">
           <label for="observations" class="block text-gray-700">Observaciones</label>
@@ -28,15 +28,15 @@
         </div>
         <div class="mb-4">
           <label for="coachName" class="block text-gray-700">Nombre del Entrenador</label>
-          <input id="coachName" [(ngModel)]="coachName" name="coachName" class="mt-1 p-2 border rounded w-full" readonly>
+          <input id="coachName" [(ngModel)]="coachName" name="coachName" class="mt-1 p-2 border rounded w-full bg-gray-100 cursor-not-allowed" readonly disabled>
         </div>
         <div class="mb-4">
           <label for="athleteName" class="block text-gray-700">Nombre del Atleta</label>
-          <input id="athleteName" [(ngModel)]="athleteName" name="athleteName" class="mt-1 p-2 border rounded w-full" readonly>
+          <input id="athleteName" [(ngModel)]="athleteName" name="athleteName" class="mt-1 p-2 border rounded w-full bg-gray-100 cursor-not-allowed" readonly disabled>
         </div>
         <div class="mb-4">
           <label for="appointmentDate" class="block text-gray-700">Fecha de la Cita</label>
-          <input id="appointmentDate" [(ngModel)]="appointmentDate" name="appointmentDate" class="mt-1 p-2 border rounded w-full" readonly>
+          <input id="appointmentDate" [(ngModel)]="appointmentDate" name="appointmentDate" class="mt-1 p-2 border rounded w-full bg-gray-100 cursor-not-allowed" readonly disabled>
         </div>
         <div class="flex justify-end">
           <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mr-2">Aceptar</button>
@@ -45,4 +45,3 @@
       </form>
     </div>
   </div>
-  

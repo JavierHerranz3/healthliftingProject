@@ -122,7 +122,10 @@ export class TrainingSheetDetailComponent implements OnInit {
   saveChanges(): void {
     if (this.trainingSheet) {
       this.trainingSheetService
-        .updateTrainingSheet(this.id, this.trainingSheet)
+        .updateTrainingSheet(this.id, {
+          ...this.trainingSheet,
+          observations: this.trainingSheet.observations,
+        })
         .subscribe({
           next: () => {
             console.log('Training sheet updated successfully');
