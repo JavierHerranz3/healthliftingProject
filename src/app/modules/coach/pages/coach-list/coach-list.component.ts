@@ -25,29 +25,25 @@ export class CoachListComponent implements OnInit {
   constructor(private coachService: CoachService, private router: Router) {}
 
   ngOnInit(): void {
-    this.searchControl.valueChanges
-      .pipe(
-        debounceTime(300),
-        switchMap((value) =>
-          this.coachService.searchCoachesByDocument(value ?? '')
-        )
-      )
-      .subscribe({
-        next: (coaches) => {
-          this.filteredCoaches = coaches;
-        },
-        error: (error) => {
-          console.error('Error searching coaches:', error);
-        },
-      });
-
-    this.getCoaches();
+    this.getCoaches(0, 20);
+    this.dataSource.paginator = this.paginator;
   }
 
-  getCoaches(): void {
-    this.coachService.getCoaches(0, 10).subscribe((page: Page<Coach>) => {
-      this.dataSource.data = page.content;
-      this.dataSource.paginator = this.paginator;
+  getCoaches(page: number, size: number): void {
+    this.coachService.getCoaches(page, size).subscribe({
+      next: (value) => {
+        if (value && value.content) {
+          this.dataSource.data = value.content;
+          if (this.paginator) {
+            this.paginator.length = value.totalElements;
+          }
+        } else {
+          console.error('Invalid response structure', value);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching coaches', err);
+      },
     });
   }
 
