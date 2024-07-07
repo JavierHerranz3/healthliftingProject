@@ -36,7 +36,7 @@ export class AppointmentService {
     size: number
   ): Observable<Page<Appointment>> {
     return this.http.get<Page<Appointment>>(
-      `${this._apiUrl}/list/coaches/${coachId}?page=${page}&size=${size}`
+      `${this._apiUrl}/list/${coachId}?page=${page}&size=${size}`
     );
   }
 

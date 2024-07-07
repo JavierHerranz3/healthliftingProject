@@ -30,6 +30,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
   searchControl = new FormControl('');
   trainingTypes: string[] = Object.values(FriendlyTrainingType);
   trainingTypeControl = new FormControl('');
+  coachIdControl = new FormControl('');
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -89,6 +90,31 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
       this.router.navigate(['/appointments/detail', id]);
     } else {
       console.error('Invalid appointment ID:', id);
+    }
+  }
+  searchAppointmentsByCoachId(): void {
+    const coachId = this.coachIdControl.value;
+    if (coachId) {
+      this.appointmentService
+        .getAppointmentsByCoachId(
+          coachId,
+          this.paginator.pageIndex,
+          this.paginator.pageSize
+        )
+        .subscribe(
+          (appointments: any) => {
+            console.log('Fetched appointments by coach ID:', appointments);
+            this.dataSource.data = appointments.content.map(
+              (appointment: Appointment) => {
+                console.log('Appointment:', appointment);
+                return appointment;
+              }
+            );
+          },
+          (error) => {
+            console.error('Error fetching appointments by coach ID:', error);
+          }
+        );
     }
   }
 }

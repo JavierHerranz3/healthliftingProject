@@ -22,7 +22,9 @@ export class CoachService {
   searchCoachByDocument(document: string): Observable<Coach> {
     return this._http.get<Coach>(`${this._apiUrl}/list/${document}`);
   }
-
+  getCoachByDocument(document: string): Observable<Coach> {
+    return this._http.get<Coach>(`${this._apiUrl}/document/${document}`);
+  }
   getAllCoaches(): Observable<Coach[]> {
     return this._http.get<Coach[]>(this._apiUrl);
   }

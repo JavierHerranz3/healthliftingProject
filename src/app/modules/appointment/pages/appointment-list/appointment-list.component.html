@@ -12,6 +12,14 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <!-- Caja de Búsqueda por ID del Entrenador -->
+    <div class="w-full max-w-md">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Buscar por ID del entrenador</mat-label>
+        <input matInput [formControl]="coachIdControl" placeholder="ID del entrenador">
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="searchAppointmentsByCoachId()">Buscar</button>
+    </div>
   </div>
   
   <!-- Lista de Citas -->
@@ -68,9 +76,5 @@
 
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
   </div>
-  
-  <!-- Contenedor para el botón Back -->
-  <div class="flex justify-end w-full mt-4">
-    <app-back-button></app-back-button>
-  </div>
 </div>
+
