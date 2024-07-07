@@ -15,11 +15,15 @@ import { AthleteService } from '../../service/athlete.service';
 export class AthleteListComponent implements OnInit {
   public dataSource = new MatTableDataSource<Athlete>();
   public displayedColumns: string[] = [
-    'personalInformation.document',
-    'personalInformation.name',
-    'personalInformation.surname',
+    'name',
+    'surname',
+    'age',
+    'height',
+    'document',
   ];
   public searchControl = new FormControl();
+  filteredAthletes: Athlete[] = [];
+
   public errorMessage: string | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -72,5 +76,11 @@ export class AthleteListComponent implements OnInit {
 
   public onPageChange(event: any): void {
     this.getAthletes(event.pageIndex, event.pageSize);
+  }
+
+  goToDetail(athlete: Athlete): void {
+    if (athlete && athlete.id) {
+      this.router.navigate([`/athletes/detail/${athlete.id}`]);
+    }
   }
 }
