@@ -49,7 +49,7 @@ export class CoachListComponent implements OnInit {
 
   goToDetail(coach: Coach): void {
     if (coach && coach.id) {
-      this.router.navigate([`/coach/detail/${coach.id}`]);
+      this.router.navigate([`/coaches/detail/${coach.id}`]);
     }
   }
 }

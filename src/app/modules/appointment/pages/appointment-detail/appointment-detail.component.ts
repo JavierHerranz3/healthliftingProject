@@ -49,7 +49,6 @@ export class AppointmentDetailComponent implements OnInit {
     this.route.params.subscribe((params) => {
       this.id = params['id'];
       this.getAppointmentById(this.id);
-      this.loadCoaches();
     });
   }
 
@@ -76,13 +75,6 @@ export class AppointmentDetailComponent implements OnInit {
     this.coachService.getCoachById(id).subscribe({
       next: (coach) => (this.coach = coach),
       error: (err) => console.error('Error fetching coach', err),
-    });
-  }
-
-  loadCoaches(): void {
-    this.coachService.getCoaches(0, 100).subscribe({
-      next: (page) => (this.coaches = page.content),
-      error: (err) => console.error('Error fetching coaches', err),
     });
   }
 
