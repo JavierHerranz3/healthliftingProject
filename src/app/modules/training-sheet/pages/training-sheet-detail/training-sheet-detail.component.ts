@@ -8,6 +8,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { TrainingSheetService } from '../../service/training-sheet.service';
 import { TrainingSheet } from '../../../../core/models/trainingSheet.model';
+import { CoachService } from '../../../coach/service/coach.service';
+import { AthleteService } from '../../../athlete/service/athlete.service';
+import { AppointmentService } from '../../../appointment/service/appointment.service';
 
 @Component({
   selector: 'app-training-sheet-detail',
@@ -17,43 +20,73 @@ import { TrainingSheet } from '../../../../core/models/trainingSheet.model';
 export class TrainingSheetDetailComponent implements OnInit {
   protected id: string = '';
   protected trainingSheet?: TrainingSheet;
-  protected dataSource = new MatTableDataSource<TrainingSheet>();
-  protected page?: { content: TrainingSheet[]; totalElements: number };
-  protected displayedColumns: string[] = [
-    'id',
-    'trainingType',
-    'observations',
-    'coachId',
-    'athleteId',
-  ];
-  protected isEditing = false; // Nueva variable para controlar el estado de edición
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  protected coachName = '';
+  protected athleteName = '';
+  protected appointmentDate = '';
+  protected isEditing = false;
 
   constructor(
-    private _trainingSheetService: TrainingSheetService,
-    private _route: ActivatedRoute,
-    private _routerNav: Router,
-    private _snackBar: MatSnackBar,
+    private trainingSheetService: TrainingSheetService,
+    private coachService: CoachService,
+    private athleteService: AthleteService,
+    private appointmentService: AppointmentService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private snackBar: MatSnackBar,
     public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this._route.params.subscribe((params) => {
-      this.id = params['id']; // Obtén el ID de la ficha de entrenamiento de los parámetros de la URL
+    this.route.params.subscribe((params) => {
+      this.id = params['id'];
       this.getTrainingSheetById(this.id);
-      this.dataSource.paginator = this.paginator;
     });
   }
 
   getTrainingSheetById(id: string): void {
-    this._trainingSheetService.getTrainingSheetById(id).subscribe({
+    this.trainingSheetService.getTrainingSheetById(id).subscribe({
       next: (value) => {
         this.trainingSheet = value;
         console.log('Training sheet fetched', value);
+        this.getCoachName(value.coachId);
+        this.getAthleteName(value.athleteId);
+        this.getAppointmentDate(value.appointmentId);
       },
       error: (err) => {
         console.error('Error fetching training sheet', err);
+      },
+    });
+  }
+
+  getCoachName(coachId: string): void {
+    this.coachService.getCoachById(coachId).subscribe({
+      next: (coach) => {
+        this.coachName = `${coach.personalInformation.name} ${coach.personalInformation.surname}`;
+      },
+      error: (err) => {
+        console.error('Error fetching coach', err);
+      },
+    });
+  }
+
+  getAthleteName(athleteId: string): void {
+    this.athleteService.getAthleteById(athleteId).subscribe({
+      next: (athlete) => {
+        this.athleteName = `${athlete.personalInformation.name} ${athlete.personalInformation.surname}`;
+      },
+      error: (err) => {
+        console.error('Error fetching athlete', err);
+      },
+    });
+  }
+
+  getAppointmentDate(appointmentId: string): void {
+    this.appointmentService.getAppointmentById(appointmentId).subscribe({
+      next: (appointment) => {
+        this.appointmentDate = appointment.date;
+      },
+      error: (err) => {
+        console.error('Error fetching appointment', err);
       },
     });
   }
@@ -75,10 +108,10 @@ export class TrainingSheetDetailComponent implements OnInit {
   }
 
   deleteTrainingSheet(): void {
-    this._trainingSheetService.deleteTrainingSheet(this.id).subscribe({
+    this.trainingSheetService.deleteTrainingSheet(this.id).subscribe({
       next: () => {
         console.log('Training sheet deleted successfully');
-        this._routerNav.navigate(['']);
+        this.router.navigate(['']);
       },
       error: (error) => {
         console.error('Error deleting training sheet', error);
@@ -88,13 +121,13 @@ export class TrainingSheetDetailComponent implements OnInit {
 
   saveChanges(): void {
     if (this.trainingSheet) {
-      this._trainingSheetService
+      this.trainingSheetService
         .updateTrainingSheet(this.id, this.trainingSheet)
         .subscribe({
           next: () => {
             console.log('Training sheet updated successfully');
             this.toggleEdit();
-            this._snackBar.open(
+            this.snackBar.open(
               'Ficha de entrenamiento actualizada correctamente',
               'Cerrar',
               {
