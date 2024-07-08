@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AppointmentService } from '../../../appointment/service/appointment.service';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-coach-detail',
@@ -31,6 +32,7 @@ export class CoachDetailComponent implements OnInit {
   protected isEditing = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private _coachService: CoachService,
@@ -44,8 +46,30 @@ export class CoachDetailComponent implements OnInit {
     this._route.params.subscribe((params) => {
       this.id = params['id'];
       this.getCoachById(this.id);
-      this.getAppointmentsByCoachId(this.id, { page: 0, size: 5 });
+      this.getAppointmentsByCoachId(this.id, { page: 0, size: 10 });
       this.dataSource.paginator = this.paginator;
+      this.appointmentsDataSource.sort = this.sort;
+      this.appointmentsDataSource.sortingDataAccessor = (
+        item: Appointment,
+        property: string
+      ) => {
+        switch (property) {
+          case 'date':
+            return new Date(item.date).getTime();
+          case 'athleteName':
+            return item.athleteName;
+          case 'athleteSurname':
+            return item.athleteSurname;
+          case 'trainingType':
+            return item.trainingTypeRecord;
+          default:
+            return '';
+        }
+      };
+      this.sort.sortChange.subscribe(() => {
+        this.customSort();
+      });
+      this.customSort();
     });
   }
 
@@ -68,11 +92,25 @@ export class CoachDetailComponent implements OnInit {
         this.appointmentsDataSource.data = appointments;
         this.activeAppointmentsCount = appointments.length;
         console.log('Appointments fetched and filtered', appointments);
+        this.customSort();
       },
       error: (err) => {
         console.error('Error fetching appointments', err);
       },
     });
+  }
+
+  customSort(): void {
+    this.appointmentsDataSource.data = this.appointmentsDataSource.data.sort(
+      (a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        const today = new Date().getTime();
+        const diffA = Math.abs(dateA - today);
+        const diffB = Math.abs(dateB - today);
+        return diffA - diffB;
+      }
+    );
   }
 
   toggleEdit(): void {
