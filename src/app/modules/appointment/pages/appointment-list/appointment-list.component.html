@@ -1,3 +1,4 @@
+<!-- Contenedor principal para la tabla y el botón -->
 <div class="flex flex-col items-center justify-start min-h-screen p-10">
   <!-- Contenedor de Cajas de Búsqueda -->
   <div class="w-full flex flex-col mb-4 space-y-4">
@@ -79,5 +80,9 @@
     </table>
 
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
+  <!-- Botón Back justo debajo de la tabla, alineado a la derecha -->
+  <div class="flex justify-end mt-4 w-full max-w-4xl">
+    <app-back-button></app-back-button>
   </div>
 </div>

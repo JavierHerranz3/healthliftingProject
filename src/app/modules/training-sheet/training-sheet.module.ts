@@ -17,6 +17,7 @@ import { MatListModule } from '@angular/material/list';
 import { TrainingSheetDetailComponent } from './pages/training-sheet-detail/training-sheet-detail.component';
 import { TrainingSheetListComponent } from './pages/training-sheet-list/training-sheet-list.component';
 import { TrainingSheetCreateComponent } from './components/training-sheet-create/training-sheet-create.component';
+import { SharedModule } from '../../shared/components/shared.module';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { TrainingSheetCreateComponent } from './components/training-sheet-create
     MatProgressSpinnerModule,
     MatSortModule,
     MatListModule,
+    SharedModule,
   ],
 })
 export class TrainingSheetModule {}
