@@ -24,13 +24,14 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
     'coach',
     'coachSurname',
     'trainingType',
-    'details',
   ];
   dataSource = new MatTableDataSource<Appointment>();
   searchControl = new FormControl('');
   trainingTypes: string[] = Object.values(FriendlyTrainingType);
   trainingTypeControl = new FormControl('');
-  coachIdControl = new FormControl('');
+  searchTypeControl = new FormControl('');
+  documentControl = new FormControl('');
+  errorMessage: string | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -84,37 +85,79 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onDetailsButtonClick(id: string): void {
-    console.log('Appointment ID:', id);
-    if (id) {
-      this.router.navigate(['/appointments/detail', id]);
-    } else {
-      console.error('Invalid appointment ID:', id);
+  goToDetail(appointment: Appointment): void {
+    if (appointment && appointment.id) {
+      this.router.navigate([`/appointments/detail/${appointment.id}`]);
     }
   }
-  searchAppointmentsByCoachId(): void {
-    const coachId = this.coachIdControl.value;
-    if (coachId) {
-      this.appointmentService
-        .getAppointmentsByCoachId(
-          coachId,
-          this.paginator.pageIndex,
-          this.paginator.pageSize
-        )
-        .subscribe(
-          (appointments: any) => {
-            console.log('Fetched appointments by coach ID:', appointments);
-            this.dataSource.data = appointments.content.map(
-              (appointment: Appointment) => {
-                console.log('Appointment:', appointment);
-                return appointment;
+
+  searchAppointmentsByDocument(): void {
+    const document = this.documentControl.value;
+    const searchType = this.searchTypeControl.value;
+
+    if (document && searchType) {
+      if (searchType === 'coach') {
+        this.appointmentService
+          .getAppointmentsByCoachDocument(
+            document,
+            this.paginator.pageIndex,
+            this.paginator.pageSize
+          )
+          .subscribe(
+            (appointments: any) => {
+              if (appointments.content.length > 0) {
+                console.log(
+                  'Fetched appointments by coach document:',
+                  appointments
+                );
+                this.dataSource.data = appointments.content;
+                this.errorMessage = null; // Clear error message
+              } else {
+                this.showErrorMessage();
               }
-            );
-          },
-          (error) => {
-            console.error('Error fetching appointments by coach ID:', error);
-          }
-        );
+            },
+            (error) => {
+              console.error(
+                'Error fetching appointments by coach document:',
+                error
+              );
+              this.showErrorMessage();
+            }
+          );
+      } else if (searchType === 'athlete') {
+        this.appointmentService
+          .getAppointmentsByAthleteDocument(
+            document,
+            this.paginator.pageIndex,
+            this.paginator.pageSize
+          )
+          .subscribe(
+            (appointments: any) => {
+              if (appointments.content.length > 0) {
+                console.log(
+                  'Fetched appointments by athlete document:',
+                  appointments
+                );
+                this.dataSource.data = appointments.content;
+                this.errorMessage = null; // Clear error message
+              } else {
+                this.showErrorMessage();
+              }
+            },
+            (error) => {
+              console.error(
+                'Error fetching appointments by athlete document:',
+                error
+              );
+              this.showErrorMessage();
+            }
+          );
+      }
     }
+  }
+
+  showErrorMessage(): void {
+    this.errorMessage = 'Documento no encontrado';
+    this.documentControl.setValue('');
   }
 }

@@ -1,6 +1,21 @@
 <div class="flex flex-col items-center justify-start min-h-screen p-10">
   <!-- Contenedor de Cajas de Búsqueda -->
-  <div class="w-full flex flex-row mb-4 space-x-4">
+  <div class="w-full flex flex-col mb-4 space-y-4">
+    <!-- Selector de Tipo de Búsqueda y Caja de Búsqueda por Documento -->
+    <div class="w-full flex flex-row items-center space-x-4">
+      <mat-form-field appearance="fill" class="w-1/3">
+        <mat-label>Buscar por</mat-label>
+        <mat-select [formControl]="searchTypeControl" placeholder="Selecciona tipo de búsqueda">
+          <mat-option value="coach">Entrenador</mat-option>
+          <mat-option value="athlete">Atleta</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="w-2/3">
+        <mat-label>Documento</mat-label>
+        <input matInput [formControl]="documentControl" placeholder="Documento">
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="searchAppointmentsByDocument()">Buscar</button>
+    </div>
     <!-- Caja de Búsqueda por Tipo de Entrenamiento -->
     <div class="w-full max-w-md">
       <mat-form-field appearance="fill" class="w-full">
@@ -12,14 +27,11 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <!-- Caja de Búsqueda por ID del Entrenador -->
-    <div class="w-full max-w-md">
-      <mat-form-field appearance="fill" class="w-full">
-        <mat-label>Buscar por ID del entrenador</mat-label>
-        <input matInput [formControl]="coachIdControl" placeholder="ID del entrenador">
-      </mat-form-field>
-      <button mat-raised-button color="primary" (click)="searchAppointmentsByCoachId()">Buscar</button>
-    </div>
+  </div>
+  
+  <!-- Mensaje de Error -->
+  <div *ngIf="errorMessage" class="w-full max-w-md p-4 mb-4 bg-red-100 text-red-500 border border-red-300 rounded-md">
+    {{ errorMessage }}
   </div>
   
   <!-- Lista de Citas -->
@@ -62,19 +74,10 @@
         <td mat-cell *matCellDef="let appointment"> {{appointment.trainingTypeRecord}} </td>
       </ng-container>
 
-      <!-- Columna de Detalles -->
-      <ng-container matColumnDef="details">
-        <th mat-header-cell *matHeaderCellDef> Detalles </th>
-        <td mat-cell *matCellDef="let appointment">
-          <button mat-raised-button color="primary" (click)="onDetailsButtonClick(appointment.id)">Detalles</button>
-        </td>
-      </ng-container>
-
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 cursor-pointer" (click)="goToDetail(row)"></tr>
     </table>
 
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
   </div>
 </div>
-

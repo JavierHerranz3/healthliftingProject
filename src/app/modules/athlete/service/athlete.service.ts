@@ -27,9 +27,9 @@ export class AthleteService {
     return this._http.get<Athlete>(`${this._apiUrl}/${id}`);
   }
 
-  getAppointmentsByAthleteId(athleteId: string): Observable<Appointment[]> {
-    return this._http.get<Appointment[]>(
-      `${this._apiUrl}/${athleteId}/appointments`
+  getAppointmentById(appointmentId: string): Observable<Appointment> {
+    return this._http.get<Appointment>(
+      `${this._apiUrl}/appointments/${appointmentId}`
     );
   }
 

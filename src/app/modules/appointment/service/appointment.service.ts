@@ -30,13 +30,23 @@ export class AppointmentService {
   getAthleteById(athleteId: string): Observable<Athlete> {
     return this.http.get<Athlete>(`${this._apiUrl}/athletes/${athleteId}`);
   }
-  getAppointmentsByCoachId(
-    coachId: string,
+  getAppointmentsByCoachDocument(
+    document: string,
     page: number,
     size: number
   ): Observable<Page<Appointment>> {
     return this.http.get<Page<Appointment>>(
-      `${this._apiUrl}/list/${coachId}?page=${page}&size=${size}`
+      `${this._apiUrl}/coaches/searchByDocument?document=${document}&page=${page}&size=${size}`
+    );
+  }
+
+  getAppointmentsByAthleteDocument(
+    document: string,
+    page: number,
+    size: number
+  ): Observable<Page<Appointment>> {
+    return this.http.get<Page<Appointment>>(
+      `${this._apiUrl}/athletes/searchByDocument?document=${document}&page=${page}&size=${size}`
     );
   }
 

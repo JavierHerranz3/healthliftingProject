@@ -8,6 +8,7 @@ import { AthleteService } from '../../service/athlete.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-athlete-detail',
@@ -46,7 +47,6 @@ export class AthleteDetailComponent implements OnInit {
     this._route.params.subscribe((params) => {
       this.id = params['id']; // Obtén el ID del atleta de los parámetros de la URL
       this.getAthleteById(this.id);
-      this.getAppointmentsByAthleteId(this.id);
       this.dataSource.paginator = this.paginator;
     });
   }
@@ -63,17 +63,23 @@ export class AthleteDetailComponent implements OnInit {
     });
   }
 
-  getAppointmentsByAthleteId(athleteId: string): void {
-    this._athleteService.getAppointmentsByAthleteId(athleteId).subscribe({
-      next: (appointments) => {
-        this.appointmentsDataSource.data = appointments;
-        this.activeAppointmentsCount = appointments.length;
-        console.log('Appointments fetched', appointments);
-      },
-      error: (err) => {
-        console.error('Error fetching appointments', err);
-      },
-    });
+  getAppointments(): void {
+    if (this.athlete && this.athlete.idAppointments) {
+      const appointmentRequests = this.athlete.idAppointments.map((id) =>
+        this._athleteService.getAppointmentById(id)
+      );
+
+      forkJoin(appointmentRequests).subscribe({
+        next: (appointments) => {
+          this.appointmentsDataSource.data = appointments;
+          this.activeAppointmentsCount = appointments.length;
+          console.log('Appointments fetched', appointments);
+        },
+        error: (err) => {
+          console.error('Error fetching appointments', err);
+        },
+      });
+    }
   }
 
   toggleEdit(): void {
