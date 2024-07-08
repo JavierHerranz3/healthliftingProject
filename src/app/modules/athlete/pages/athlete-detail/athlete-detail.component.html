@@ -78,25 +78,24 @@
   </div>
 
   <!-- Add this block inside your existing template where it fits best -->
-<div class="bg-white p-6 rounded-lg shadow-md mt-6" *ngIf="trainingSheetsDataSource.data.length > 0">
-  <h2 class="text-xl font-bold mb-4">Fichas de Entrenamiento</h2>
-  <table mat-table [dataSource]="trainingSheetsDataSource" class="mat-table">
-    <ng-container matColumnDef="trainingType">
-      <th mat-header-cell *matHeaderCellDef> Tipo de Entrenamiento </th>
-      <td mat-cell *matCellDef="let sheet"> {{sheet.trainingTypeRecord}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="observations">
-      <th mat-header-cell *matHeaderCellDef> Observaciones </th>
-      <td mat-cell *matCellDef="let sheet"> {{sheet.observations}} </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="trainingSheetsDisplayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: trainingSheetsDisplayedColumns;" class="hover:bg-gray-50 cursor-pointer"></tr>
-  </table>
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onTrainingSheetsPageChange($event)"></mat-paginator>
-</div>
-</div>
+  <div class="bg-white p-6 rounded-lg shadow-md mt-6" *ngIf="trainingSheetsDataSource.data.length > 0">
+    <h2 class="text-xl font-bold mb-4">Fichas de Entrenamiento</h2>
+    <table mat-table [dataSource]="trainingSheetsDataSource" class="mat-table">
+      <ng-container matColumnDef="trainingType">
+        <th mat-header-cell *matHeaderCellDef> Tipo de Entrenamiento </th>
+        <td mat-cell *matCellDef="let sheet"> {{sheet.trainingTypeRecord}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="observations">
+        <th mat-header-cell *matHeaderCellDef> Observaciones </th>
+        <td mat-cell *matCellDef="let sheet"> {{sheet.observations}} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="trainingSheetsDisplayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: trainingSheetsDisplayedColumns;" (click)="goToTrainingSheetDetails(row)" class="hover:bg-gray-50 cursor-pointer"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onTrainingSheetsPageChange($event)"></mat-paginator>
+  </div>
 
 <!-- Botón Back justo debajo de la tabla, alineado a la derecha -->
 <div class="flex justify-end mt-4">

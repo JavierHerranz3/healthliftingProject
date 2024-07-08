@@ -2,14 +2,12 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Athlete, DocumentType } from '../../../../core/models/athlete.model';
+import { Athlete } from '../../../../core/models/athlete.model';
 import { Appointment } from '../../../../core/models/appointment.model';
 import { AthleteService } from '../../service/athlete.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { forkJoin } from 'rxjs';
-import { MatSort } from '@angular/material/sort';
 import { TrainingSheet } from '../../../../core/models/trainingSheet.model';
 import { DatePipe } from '@angular/common';
 
@@ -40,7 +38,7 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
   ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild('trainingSheetsPaginator') trainingSheetsPaginator!: MatPaginator;
+  @ViewChild(MatPaginator) trainingSheetsPaginator!: MatPaginator;
 
   constructor(
     private _athleteService: AthleteService,
@@ -56,14 +54,16 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
       this.id = params['id'];
       this.getAthleteById(this.id);
       this.loadAllAppointments(this.id, 0, 10);
-      this.loadAllTrainingSheets(this.id, 0, 5);
+      this.loadAllTrainingSheets(this.id, 0, 10);
     });
   }
+
   ngAfterViewInit(): void {
     // Asigna el paginador a la fuente de datos después de que la vista se haya inicializado
     this.appointmentsDataSource.paginator = this.paginator;
     this.trainingSheetsDataSource.paginator = this.trainingSheetsPaginator;
   }
+
   getAthleteById(id: string): void {
     this._athleteService.getAthleteById(id).subscribe({
       next: (value) => {
@@ -104,6 +104,7 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
       .getTrainingSheetsByAthleteId(athleteId, page, size)
       .subscribe({
         next: (trainingSheetsPage) => {
+          console.log('Training Sheets Page:', trainingSheetsPage);
           this.trainingSheetsDataSource.data = trainingSheetsPage.content.map(
             (trainingSheet: any) => ({
               ...trainingSheet,
@@ -113,6 +114,10 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
           );
           this.trainingSheetsPaginator.length =
             trainingSheetsPage.totalElements;
+          console.log(
+            'Training sheets fetched and filtered',
+            this.trainingSheetsDataSource.data
+          );
         },
         error: (err) => {
           console.error('Error fetching training sheets', err);
@@ -186,7 +191,11 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
       this._routerNav.navigate([`/appointments/list/${athlete.id}`]);
     }
   }
-
+  goToTrainingSheetDetails(trainingSheet: TrainingSheet): void {
+    if (trainingSheet && trainingSheet.id) {
+      this._routerNav.navigate([`/training-sheets/detail/${trainingSheet.id}`]);
+    }
+  }
   goToAppointmentDetails(appointment: Appointment): void {
     if (appointment && appointment.id) {
       this._routerNav.navigate([`/appointments/detail/${appointment.id}`]);

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthlifting Center - Home</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .banner-container {
+            position: relative;
+            height: 37vh; /* Ajusta la altura según sea necesario */
+            overflow: hidden;
+        }
+        .banner-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        .welcome-text {
+            position: relative;
+            z-index: 10;
+        }
+        .bg-primary {
+            background-color: #234bc0; 
+        }
+        .text-primary {
+            color: #234bc0; 
+        }
+        .feature-box {
+            border: 2px solid #aaaab5;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner-container">
+        <img src="assets/banner-training.jpg" alt="Banner Training" class="banner-img"/>
+    </div>
+
+    <!-- Welcome Section -->
+    <div class="text-center p-4 bg-primary text-white welcome-text">
+        <p class="text-6xl font-bold mb-5">Bienvenidos a Healthlifting Center</p>
+        <p class="text-3xl font-bold mb-5">
+            Improve your Biomechanics
+        </p>
+    </div>
+
+    <!-- Description -->
+    <div class="flex items-center justify-center mt-8">
+        <p class="text-lg mb-5 text-gray-800 max-w-screen-md mx-auto text-center">
+            Healthlifting Center es tu centro de entrenamiento diseñado para gestionar citas y facilitar la conexión entre atletas y entrenadores, tanto nuevos como experimentados. Nuestro objetivo es simplificar tu rutina diaria, permitiéndote centrarte en lo más importante: la mejora de tu biomecánica y el desarrollo de tus aptitudes físicas.
+        </p>
+    </div>
+
+    <!-- Services Section -->
+    <div class="flex justify-center mt-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-screen-lg">
+            <a routerLink="/athletes" class="box hover:shadow-lg flex flex-col items-center p-16 bg-white rounded-lg">
+                <mat-icon class="icon text-green-500">sports</mat-icon>
+                <span class="text-center text-2xl mt-2">Atletas</span>
+            </a>
+            <a routerLink="/coaches" class="box hover:shadow-lg flex flex-col items-center p-16 bg-white rounded-lg">
+                <mat-icon class="icon text-purple-500">fitness_center</mat-icon>
+                <span class="text-center text-2xl mt-2">Entrenadores</span>
+            </a>
+            <a routerLink="/appointments" class="box hover:shadow-lg flex flex-col items-center p-16 bg-white rounded-lg">
+                <mat-icon class="icon text-blue-500">event</mat-icon>
+                <span class="text-center text-2xl mt-2">Próximas Citas</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="mt-20 p-10 bg-white">
+        <div class="max-w-screen-lg mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-10 text-primary">Características Destacadas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="feature-box p-6 bg-gray-50 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4 text-primary">Seguimiento de Atletas</h3>
+                    <p>Realiza un seguimiento detallado del progreso de tus atletas.</p>
+                </div>
+                <div class="feature-box p-6 bg-gray-50 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4 text-primary">Soporte de Entrenamiento</h3>
+                    <p>Accede a recursos y herramientas para ofrecer el mejor soporte de entrenamiento.</p>
+                </div>
+                <div class="feature-box p-6 bg-gray-50 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4 text-primary">Gestión de Citas</h3>
+                    <p>Administra y coordina tus citas de manera eficiente.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white py-8 mt-10">
+        <div class="container mx-auto px-4 flex flex-wrap justify-center items-center">
+            <!-- Información de la clínica -->
+            <div class="w-full md:w-1/3 text-center md:text-left mb-6 md:mb-0">
+                <h2 class="text-gray-800 font-bold text-lg mb-2">HEALTHLIFTING CENTER</h2>
+                <p class="text-gray-600">Calle Uruguay, 23 Bajo 46007 Valencia</p>
+                <h3 class="text-gray-800 font-bold text-lg mt-4 mb-2">CONTACTO</h3>
+                <p class="text-gray-600">623 456 789</p>
+                <p class="text-gray-600">healtlifting&#64;info.com</p>
+            </div>
+            <!-- Servicios -->
+            <div class="w-full md:w-1/5 text-center md:text-left mb-7 md:mb-0">
+                <h3 class="text-gray-800 font-bold text-lg mb-2">NUESTROS SERVICIOS</h3>
+                <ul class="list-none">
+                    <li class="text-gray-600 mb-2">Seguimiento de Atletas</li>
+                    <li class="text-gray-600 mb-2">Soporte de Entrenamiento</li>
+                    <li class="text-gray-600 mb-2">Gestión de Citas</li>
+                </ul>
+            </div>
+            <!-- Redes Sociales -->
+            <div class="w-full md:w-1/4 mb-7 md:mb-0 flex items-center justify-center">
+                <a href="#" class="text-gray-600 mx-2"><i class="fab fa-facebook fa-2x"></i></a>
+                <a href="#" class="text-gray-600 mx-2"><i class="fab fa-instagram fa-2x"></i></a>
+                <a href="#" class="text-gray-600 mx-2"><i class="fab fa-youtube fa-2x"></i></a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

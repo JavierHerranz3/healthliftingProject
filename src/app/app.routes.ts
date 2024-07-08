@@ -2,6 +2,13 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: '',
+    loadChildren: () =>
+      import('./modules/welcomepage/welcomepage.module').then(
+        (m) => m.WelcomepageModule
+      ),
+  },
+  {
     path: 'athletes',
     loadChildren: () =>
       import('./modules/athlete/athlete.module').then((m) => m.AthleteModule),

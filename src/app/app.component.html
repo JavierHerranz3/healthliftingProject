@@ -1,4 +1,9 @@
 <app-header></app-header>  
 <app-subheader></app-subheader>
-<div class="p-4 max-w-4xl mx-auto">
-    <router-outlet></router-outlet></div>
+<div *ngIf="isWelcomePage">
+    <router-outlet></router-outlet>
+  </div>
+  <div *ngIf="!isWelcomePage" class="max-w-7xl mx-auto p-4">
+    <router-outlet></router-outlet>
+  </div>
+  
