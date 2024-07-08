@@ -6,14 +6,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
+
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { AthleteCreationContainerComponent } from './buttons/athlete-creation-container/athlete-creation-container.component';
 import { AppointmentCreationContainerComponent } from './buttons/appointment-creation-container/appointment-creation-container.component';
-import { CoachCreationContainerComponent } from './buttons/coach-creation-container/coach-creation-container.component';
 import { BackButtonComponent } from './buttons/back-button/back-button.component';
-import { FooterComponent } from './footer/footer.component';
+import { AthleteCreationContainerComponent } from './buttons/athlete-creation-container/athlete-creation-container.component';
+import { CoachCreationContainerComponent } from './buttons/coach-creation-container/coach-creation-container.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -21,7 +21,6 @@ import { FooterComponent } from './footer/footer.component';
     CoachCreationContainerComponent,
     AppointmentCreationContainerComponent,
     BackButtonComponent,
-    FooterComponent,
   ],
   imports: [
     MatSelectModule,
@@ -41,7 +40,6 @@ import { FooterComponent } from './footer/footer.component';
     AthleteCreationContainerComponent,
     CoachCreationContainerComponent,
     BackButtonComponent,
-    FooterComponent,
   ],
 })
 export class SharedModule {}
