@@ -96,6 +96,12 @@ export class TrainingSheetCreateComponent implements OnInit {
         coachId: formValues.coachId,
         athleteId: formValues.athleteId,
         appointmentId: formValues.appointmentId,
+        coachName: formValues.coachName,
+        coachSurname: formValues.coachSurname,
+        coachDocument: formValues.coachDocument,
+        athleteName: formValues.athleteName,
+        athleteSurname: formValues.athleteSurname,
+        athleteDocument: formValues.athleteDocument,
       };
       this.createTrainingSheet(newTrainingSheet);
     } else {

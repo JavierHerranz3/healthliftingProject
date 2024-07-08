@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
 import { apiUrl } from '../../../enviroment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Athlete } from '../../../core/models/athlete.model';
 import { Appointment } from '../../../core/models/appointment.model';
 import { Page } from '../../../core/models/page.model';
+import { TrainingSheet } from '../../../core/models/trainingSheet.model';
+import { Coach } from '../../../core/models/coach.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AthleteService {
+  getCoachById(coachId: string): Observable<Coach> {
+    return this._http.get<Coach>(`${this._apiUrl}/${coachId}`);
+  }
   private _apiUrl = apiUrl + '/athletes';
 
   constructor(private _http: HttpClient) {}
@@ -33,12 +38,26 @@ export class AthleteService {
     );
   }
   getAppointmentsByAthleteId(
-    id: string,
-    pageable: any
+    athleteId: string,
+    page: number,
+    size: number
   ): Observable<Page<Appointment>> {
+    const params = { page: page.toString(), size: size.toString() };
     return this._http.get<Page<Appointment>>(
-      `${apiUrl}/appointments/athletes/${id}`,
-      { params: pageable }
+      `${apiUrl}/appointments/athletes/${athleteId}`,
+      { params }
+    );
+  }
+
+  getTrainingSheetsByAthleteId(
+    athleteId: string,
+    page: number,
+    size: number
+  ): Observable<Page<TrainingSheet>> {
+    const params = { page: page.toString(), size: size.toString() };
+    return this._http.get<Page<TrainingSheet>>(
+      `${apiUrl}/trainingsheets/athletes/${athleteId}`,
+      { params }
     );
   }
 

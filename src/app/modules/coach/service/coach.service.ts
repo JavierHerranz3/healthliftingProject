@@ -5,6 +5,7 @@ import { Coach } from '../../../core/models/coach.model';
 import { apiUrl } from '../../../enviroment';
 import { Appointment } from '../../../core/models/appointment.model';
 import { Page } from '../../../core/models/page.model';
+import { TrainingSheet } from '../../../core/models/trainingSheet.model';
 
 @Injectable({
   providedIn: 'root',
@@ -32,12 +33,25 @@ export class CoachService {
     return this._http.get<Coach>(`${this._apiUrl}/${id}`);
   }
   getAppointmentsByCoachId(
-    id: string,
-    pageable: any
+    coachId: string,
+    page: number,
+    size: number
   ): Observable<Page<Appointment>> {
+    const params = { page: page.toString(), size: size.toString() };
     return this._http.get<Page<Appointment>>(
-      `${apiUrl}/appointments/coaches/${id}`,
-      { params: pageable }
+      `${apiUrl}/appointments/coaches/${coachId}`,
+      { params }
+    );
+  }
+  getTrainingSheetsByCoachId(
+    coachId: string,
+    page: number,
+    size: number
+  ): Observable<Page<TrainingSheet>> {
+    const params = { page: page.toString(), size: size.toString() };
+    return this._http.get<Page<TrainingSheet>>(
+      `${apiUrl}/trainingsheets/coaches/${coachId}`,
+      { params }
     );
   }
 

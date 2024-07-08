@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,15 +10,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { forkJoin } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
+import { TrainingSheet } from '../../../../core/models/trainingSheet.model';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-athlete-detail',
   templateUrl: './athlete-detail.component.html',
   styleUrls: ['./athlete-detail.component.css'],
+  providers: [DatePipe],
 })
-export class AthleteDetailComponent implements OnInit {
+export class AthleteDetailComponent implements OnInit, AfterViewInit {
   protected id: string = '';
-  protected athlete?: Athlete;
+  public athlete?: Athlete;
   protected dataSource = new MatTableDataSource<Athlete>();
   protected appointmentsDataSource = new MatTableDataSource<Appointment>();
   protected displayedColumns: string[] = ['id', 'name', 'surname', 'document'];
@@ -30,49 +33,37 @@ export class AthleteDetailComponent implements OnInit {
   ];
   protected activeAppointmentsCount = 0;
   protected isEditing = false;
+  protected trainingSheetsDataSource = new MatTableDataSource<TrainingSheet>();
+  protected trainingSheetsDisplayedColumns: string[] = [
+    'trainingType',
+    'observations',
+  ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('trainingSheetsPaginator') trainingSheetsPaginator!: MatPaginator;
 
   constructor(
     private _athleteService: AthleteService,
     private _route: ActivatedRoute,
     private _routerNav: Router,
     private _snackBar: MatSnackBar,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private _datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
     this._route.params.subscribe((params) => {
       this.id = params['id'];
       this.getAthleteById(this.id);
-      this.getAppointmentsByAthleteId(this.id, { page: 0, size: 5 });
-      this.dataSource.paginator = this.paginator;
-      this.appointmentsDataSource.sort = this.sort;
-      this.appointmentsDataSource.sortingDataAccessor = (
-        item: Appointment,
-        property: string
-      ) => {
-        switch (property) {
-          case 'date':
-            return new Date(item.date).getTime();
-          case 'coachName':
-            return item.coachName;
-          case 'coachSurname':
-            return item.coachSurname;
-          case 'trainingType':
-            return item.trainingTypeRecord;
-          default:
-            return '';
-        }
-      };
-      this.sort.sortChange.subscribe(() => {
-        this.customSort();
-      });
-      this.customSort();
+      this.loadAllAppointments(this.id, 0, 10);
+      this.loadAllTrainingSheets(this.id, 0, 5);
     });
   }
-
+  ngAfterViewInit(): void {
+    // Asigna el paginador a la fuente de datos después de que la vista se haya inicializado
+    this.appointmentsDataSource.paginator = this.paginator;
+    this.trainingSheetsDataSource.paginator = this.trainingSheetsPaginator;
+  }
   getAthleteById(id: string): void {
     this._athleteService.getAthleteById(id).subscribe({
       next: (value) => {
@@ -85,16 +76,22 @@ export class AthleteDetailComponent implements OnInit {
     });
   }
 
-  getAppointmentsByAthleteId(athleteId: string, pageable: any): void {
+  loadAllAppointments(athleteId: string, page: number, size: number): void {
     this._athleteService
-      .getAppointmentsByAthleteId(athleteId, pageable)
+      .getAppointmentsByAthleteId(athleteId, page, size)
       .subscribe({
         next: (appointmentsPage) => {
-          const appointments = appointmentsPage.content;
-          this.appointmentsDataSource.data = appointments;
-          this.activeAppointmentsCount = appointments.length;
-          console.log('Appointments fetched and filtered', appointments);
-          this.customSort();
+          this.appointmentsDataSource.data = appointmentsPage.content.map(
+            (appointment: any) => ({
+              ...appointment,
+              date: this._datePipe.transform(appointment.date, 'medium') || '',
+            })
+          );
+          this.paginator.length = appointmentsPage.totalElements;
+          console.log(
+            'Appointments fetched and filtered',
+            this.appointmentsDataSource.data
+          );
         },
         error: (err) => {
           console.error('Error fetching appointments', err);
@@ -102,17 +99,37 @@ export class AthleteDetailComponent implements OnInit {
       });
   }
 
-  customSort(): void {
-    this.appointmentsDataSource.data = this.appointmentsDataSource.data.sort(
-      (a, b) => {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        const today = new Date().getTime();
-        const diffA = Math.abs(dateA - today);
-        const diffB = Math.abs(dateB - today);
-        return diffA - diffB;
-      }
-    );
+  loadAllTrainingSheets(athleteId: string, page: number, size: number): void {
+    this._athleteService
+      .getTrainingSheetsByAthleteId(athleteId, page, size)
+      .subscribe({
+        next: (trainingSheetsPage) => {
+          this.trainingSheetsDataSource.data = trainingSheetsPage.content.map(
+            (trainingSheet: any) => ({
+              ...trainingSheet,
+              date:
+                this._datePipe.transform(trainingSheet.date, 'medium') || '',
+            })
+          );
+          this.trainingSheetsPaginator.length =
+            trainingSheetsPage.totalElements;
+        },
+        error: (err) => {
+          console.error('Error fetching training sheets', err);
+        },
+      });
+  }
+
+  onAppointmentsPageChange(event: any): void {
+    const pageIndex = event.pageIndex;
+    const pageSize = event.pageSize;
+    this.loadAllAppointments(this.id, pageIndex, pageSize);
+  }
+
+  onTrainingSheetsPageChange(event: any): void {
+    const pageIndex = event.pageIndex;
+    const pageSize = event.pageSize;
+    this.loadAllTrainingSheets(this.id, pageIndex, pageSize);
   }
 
   toggleEdit(): void {
