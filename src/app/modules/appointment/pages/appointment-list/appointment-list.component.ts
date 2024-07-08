@@ -27,7 +27,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
   ];
   dataSource = new MatTableDataSource<Appointment>();
   searchControl = new FormControl('');
-  trainingTypes: string[] = Object.values(FriendlyTrainingType);
+  trainingTypes: string[] = ['Todos', ...Object.values(FriendlyTrainingType)];
   trainingTypeControl = new FormControl('');
   searchTypeControl = new FormControl('');
   documentControl = new FormControl('');
@@ -70,16 +70,22 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
 
   applyFilter(): void {
     const trainingTypeFriendly = this.trainingTypeControl.value?.trim() || '';
-    const trainingType =
-      TrainingTypeRecordMap[trainingTypeFriendly as FriendlyTrainingType] || '';
+    if (trainingTypeFriendly === 'Todos') {
+      this.dataSource.filter = '';
+    } else {
+      const trainingType =
+        TrainingTypeRecordMap[trainingTypeFriendly as FriendlyTrainingType] ||
+        '';
 
-    this.dataSource.filterPredicate = (data: Appointment, filter: string) => {
-      const matchesTrainingType = data.trainingTypeRecord
-        .toLowerCase()
-        .includes(trainingType.toLowerCase());
-      return matchesTrainingType;
-    };
-    this.dataSource.filter = trainingType;
+      this.dataSource.filterPredicate = (data: Appointment, filter: string) => {
+        const matchesTrainingType = data.trainingTypeRecord
+          .toLowerCase()
+          .includes(trainingType.toLowerCase());
+        return matchesTrainingType;
+      };
+      this.dataSource.filter = trainingType;
+    }
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -114,6 +120,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
                 this.errorMessage = null; // Clear error message
               } else {
                 this.showErrorMessage();
+                this.loadAppointments();
               }
             },
             (error) => {
@@ -122,6 +129,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
                 error
               );
               this.showErrorMessage();
+              this.loadAppointments();
             }
           );
       } else if (searchType === 'athlete') {
@@ -142,6 +150,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
                 this.errorMessage = null; // Clear error message
               } else {
                 this.showErrorMessage();
+                this.loadAppointments();
               }
             },
             (error) => {
@@ -150,6 +159,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
                 error
               );
               this.showErrorMessage();
+              this.loadAppointments();
             }
           );
       }
