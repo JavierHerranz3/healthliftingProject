@@ -31,9 +31,13 @@ export class CoachService {
   getCoachById(id: string): Observable<Coach> {
     return this._http.get<Coach>(`${this._apiUrl}/${id}`);
   }
-  getAppointmentsByCoachId(id: string): Observable<Appointment[]> {
-    return this._http.get<Appointment[]>(
-      `${this._apiUrl}/appointments/coaches/${id}`
+  getAppointmentsByCoachId(
+    id: string,
+    pageable: any
+  ): Observable<Page<Appointment>> {
+    return this._http.get<Page<Appointment>>(
+      `${apiUrl}/appointments/coaches/${id}`,
+      { params: pageable }
     );
   }
 

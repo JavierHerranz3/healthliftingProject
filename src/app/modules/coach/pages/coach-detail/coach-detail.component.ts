@@ -34,7 +34,6 @@ export class CoachDetailComponent implements OnInit {
 
   constructor(
     private _coachService: CoachService,
-    private _appointmentService: AppointmentService,
     private _route: ActivatedRoute,
     private _routerNav: Router,
     private _snackBar: MatSnackBar,
@@ -45,6 +44,7 @@ export class CoachDetailComponent implements OnInit {
     this._route.params.subscribe((params) => {
       this.id = params['id'];
       this.getCoachById(this.id);
+      this.getAppointmentsByCoachId(this.id, { page: 0, size: 5 });
       this.dataSource.paginator = this.paginator;
     });
   }
@@ -61,20 +61,13 @@ export class CoachDetailComponent implements OnInit {
     });
   }
 
-  getAppointmentsByCoachId(coachId: string): void {
-    this._coachService.getAppointmentsByCoachId(coachId).subscribe({
-      next: (appointments) => {
-        if (Array.isArray(appointments)) {
-          this.appointmentsDataSource.data = appointments;
-          this.activeAppointmentsCount = appointments.length;
-          console.log('Appointments fetched and filtered', appointments);
-        } else {
-          console.error(
-            'Error: Appointments response is not an array',
-            appointments
-          );
-          this.appointmentsDataSource.data = [];
-        }
+  getAppointmentsByCoachId(coachId: string, pageable: any): void {
+    this._coachService.getAppointmentsByCoachId(coachId, pageable).subscribe({
+      next: (appointmentsPage) => {
+        const appointments = appointmentsPage.content;
+        this.appointmentsDataSource.data = appointments;
+        this.activeAppointmentsCount = appointments.length;
+        console.log('Appointments fetched and filtered', appointments);
       },
       error: (err) => {
         console.error('Error fetching appointments', err);
@@ -138,6 +131,12 @@ export class CoachDetailComponent implements OnInit {
   goToAppointments(coach: Coach): void {
     if (coach && coach.id) {
       this._routerNav.navigate([`/appointments/list/${coach.id}`]);
+    }
+  }
+
+  goToAppointmentDetails(appointment: Appointment): void {
+    if (appointment && appointment.id) {
+      this._routerNav.navigate([`/appointments/detail/${appointment.id}`]);
     }
   }
 }
