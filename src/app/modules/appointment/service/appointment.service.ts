@@ -39,7 +39,15 @@ export class AppointmentService {
       `${this._apiUrl}/coaches/searchByDocument?document=${document}&page=${page}&size=${size}`
     );
   }
-
+  getAppointmentsByAthleteId(
+    id: string,
+    pageable: any
+  ): Observable<Page<Appointment>> {
+    return this.http.get<Page<Appointment>>(
+      `${apiUrl}/appointments/athletes/${id}`,
+      { params: pageable }
+    );
+  }
   getAppointmentsByAthleteDocument(
     document: string,
     page: number,

@@ -32,6 +32,15 @@ export class AthleteService {
       `${this._apiUrl}/appointments/${appointmentId}`
     );
   }
+  getAppointmentsByAthleteId(
+    id: string,
+    pageable: any
+  ): Observable<Page<Appointment>> {
+    return this._http.get<Page<Appointment>>(
+      `${apiUrl}/appointments/athletes/${id}`,
+      { params: pageable }
+    );
+  }
 
   createAthlete(athlete: Athlete): Observable<Athlete> {
     return this._http.post<Athlete>(this._apiUrl, athlete);

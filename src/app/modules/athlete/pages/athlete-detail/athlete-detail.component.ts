@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { forkJoin } from 'rxjs';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-athlete-detail',
@@ -19,21 +20,19 @@ export class AthleteDetailComponent implements OnInit {
   protected id: string = '';
   protected athlete?: Athlete;
   protected dataSource = new MatTableDataSource<Athlete>();
-  protected appointmentsDataSource = new MatTableDataSource<Appointment>(); // DataSource para las citas
-  protected page?: { content: Athlete[]; totalElements: number };
+  protected appointmentsDataSource = new MatTableDataSource<Appointment>();
   protected displayedColumns: string[] = ['id', 'name', 'surname', 'document'];
   protected appointmentDisplayedColumns: string[] = [
-    'id',
     'date',
     'coachName',
     'coachSurname',
     'trainingType',
   ];
   protected activeAppointmentsCount = 0;
-  protected isEditing = false; // Nueva variable para controlar el estado de edición
+  protected isEditing = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  documentTypes: any;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private _athleteService: AthleteService,
@@ -45,9 +44,32 @@ export class AthleteDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this._route.params.subscribe((params) => {
-      this.id = params['id']; // Obtén el ID del atleta de los parámetros de la URL
+      this.id = params['id'];
       this.getAthleteById(this.id);
+      this.getAppointmentsByAthleteId(this.id, { page: 0, size: 5 });
       this.dataSource.paginator = this.paginator;
+      this.appointmentsDataSource.sort = this.sort;
+      this.appointmentsDataSource.sortingDataAccessor = (
+        item: Appointment,
+        property: string
+      ) => {
+        switch (property) {
+          case 'date':
+            return new Date(item.date).getTime();
+          case 'coachName':
+            return item.coachName;
+          case 'coachSurname':
+            return item.coachSurname;
+          case 'trainingType':
+            return item.trainingTypeRecord;
+          default:
+            return '';
+        }
+      };
+      this.sort.sortChange.subscribe(() => {
+        this.customSort();
+      });
+      this.customSort();
     });
   }
 
@@ -63,23 +85,34 @@ export class AthleteDetailComponent implements OnInit {
     });
   }
 
-  getAppointments(): void {
-    if (this.athlete && this.athlete.idAppointments) {
-      const appointmentRequests = this.athlete.idAppointments.map((id) =>
-        this._athleteService.getAppointmentById(id)
-      );
-
-      forkJoin(appointmentRequests).subscribe({
-        next: (appointments) => {
+  getAppointmentsByAthleteId(athleteId: string, pageable: any): void {
+    this._athleteService
+      .getAppointmentsByAthleteId(athleteId, pageable)
+      .subscribe({
+        next: (appointmentsPage) => {
+          const appointments = appointmentsPage.content;
           this.appointmentsDataSource.data = appointments;
           this.activeAppointmentsCount = appointments.length;
-          console.log('Appointments fetched', appointments);
+          console.log('Appointments fetched and filtered', appointments);
+          this.customSort();
         },
         error: (err) => {
           console.error('Error fetching appointments', err);
         },
       });
-    }
+  }
+
+  customSort(): void {
+    this.appointmentsDataSource.data = this.appointmentsDataSource.data.sort(
+      (a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        const today = new Date().getTime();
+        const diffA = Math.abs(dateA - today);
+        const diffB = Math.abs(dateB - today);
+        return diffA - diffB;
+      }
+    );
   }
 
   toggleEdit(): void {
@@ -129,5 +162,17 @@ export class AthleteDetailComponent implements OnInit {
 
   modifyAthlete(): void {
     this.toggleEdit();
+  }
+
+  goToAppointments(athlete: Athlete): void {
+    if (athlete && athlete.id) {
+      this._routerNav.navigate([`/appointments/list/${athlete.id}`]);
+    }
+  }
+
+  goToAppointmentDetails(appointment: Appointment): void {
+    if (appointment && appointment.id) {
+      this._routerNav.navigate([`/appointments/detail/${appointment.id}`]);
+    }
   }
 }

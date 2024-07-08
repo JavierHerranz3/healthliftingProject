@@ -46,7 +46,7 @@ export class CoachDetailComponent implements OnInit {
     this._route.params.subscribe((params) => {
       this.id = params['id'];
       this.getCoachById(this.id);
-      this.getAppointmentsByCoachId(this.id, { page: 0, size: 10 });
+      this.getAppointmentsByCoachId(this.id, { page: 0, size: 5 });
       this.dataSource.paginator = this.paginator;
       this.appointmentsDataSource.sort = this.sort;
       this.appointmentsDataSource.sortingDataAccessor = (
