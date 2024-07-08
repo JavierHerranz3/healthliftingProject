@@ -10,13 +10,16 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { AthleteModule } from './modules/athlete/athlete.module';
 import { HttpClientModule } from '@angular/common/http';
-import { SubheaderComponent } from './shared/components/subheader/subheader.component';
+
 import { SharedModule } from './shared/components/shared.module';
 import { CommonModule } from '@angular/common';
+import { SubheaderComponent } from './shared/components/subheader/subheader.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
   imports: [
     RouterOutlet,
     HeaderComponent,
@@ -29,8 +32,6 @@ import { CommonModule } from '@angular/common';
     SharedModule,
     CommonModule,
   ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {
   title = 'healthliftingCenter';

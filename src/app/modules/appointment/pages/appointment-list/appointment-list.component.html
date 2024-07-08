@@ -1,86 +1,93 @@
 <!-- Contenedor principal para la tabla y el botón -->
-<div class="flex flex-col items-center justify-start min-h-screen p-10">
-  <!-- Contenedor de Cajas de Búsqueda -->
-  <div class="w-full flex flex-col mb-4 space-y-4">
-    <!-- Selector de Tipo de Búsqueda y Caja de Búsqueda por Documento -->
-    <div class="w-full flex flex-row items-center space-x-4">
-      <mat-form-field appearance="fill" class="w-1/3">
-        <mat-label>Buscar por</mat-label>
-        <mat-select [formControl]="searchTypeControl" placeholder="Selecciona tipo de búsqueda">
-          <mat-option value="coach">Entrenador</mat-option>
-          <mat-option value="athlete">Atleta</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="fill" class="w-2/3">
-        <mat-label>Documento</mat-label>
-        <input matInput [formControl]="documentControl" placeholder="Documento">
-      </mat-form-field>
-      <button mat-raised-button color="primary" (click)="searchAppointmentsByDocument()">Buscar</button>
+<div class="flex flex-col items-center justify-start min-h-screen p-10 space-y-4">
+  <!-- Título -->
+  <div class="w-full max-w-4xl">
+    <h1 class="text-xxl font-bold mb-2">Citas de entrenamiento</h1>
+  </div>
+  <!-- Contenedor de Cajas de Búsqueda y Tabla -->
+  <div class="w-full max-w-4xl space-y-4">
+    <!-- Contenedor de Cajas de Búsqueda -->
+    <div class="flex flex-col space-y-4">
+      <!-- Selector de Tipo de Búsqueda y Caja de Búsqueda por Documento -->
+      <div class="flex flex-row items-center space-x-4">
+        <mat-form-field appearance="fill" class="w-1/3">
+          <mat-label>Buscar por</mat-label>
+          <mat-select [formControl]="searchTypeControl" placeholder="Selecciona tipo de búsqueda">
+            <mat-option value="coach">Entrenador</mat-option>
+            <mat-option value="athlete">Atleta</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-2/3">
+          <mat-label>Documento</mat-label>
+          <input matInput [formControl]="documentControl" placeholder="Documento">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="searchAppointmentsByDocument()">Buscar</button>
+      </div>
+      <!-- Caja de Búsqueda por Tipo de Entrenamiento -->
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Buscar por tipo de entrenamiento</mat-label>
+          <mat-select [formControl]="trainingTypeControl" placeholder="Tipo de entrenamiento">
+            <mat-option *ngFor="let type of trainingTypes" [value]="type">
+              {{ type }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
-    <!-- Caja de Búsqueda por Tipo de Entrenamiento -->
-    <div class="w-full max-w-md">
-      <mat-form-field appearance="fill" class="w-full">
-        <mat-label>Buscar por tipo de entrenamiento</mat-label>
-        <mat-select [formControl]="trainingTypeControl" placeholder="Tipo de entrenamiento">
-          <mat-option *ngFor="let type of trainingTypes" [value]="type">
-            {{ type }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+    
+    <!-- Mensaje de Error -->
+    <div *ngIf="errorMessage" class="w-full max-w-md p-4 bg-red-100 text-red-500 border border-red-300 rounded-md">
+      {{ errorMessage }}
+    </div>
+    
+    <!-- Lista de Citas -->
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" class="mat-table" matSort>
+        <!-- Columna de Fecha -->
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
+          <td mat-cell *matCellDef="let appointment"> {{appointment.date | date}} </td>
+        </ng-container>
+
+        <!-- Columna de Atleta -->
+        <ng-container matColumnDef="athlete">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Atleta </th>
+          <td mat-cell *matCellDef="let appointment"> {{appointment.athleteName}} </td>
+        </ng-container>
+
+        <!-- Columna de Apellido del Atleta -->
+        <ng-container matColumnDef="athleteSurname">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del Atleta </th>
+          <td mat-cell *matCellDef="let appointment"> {{appointment.athleteSurname}} </td>
+        </ng-container>
+
+        <!-- Columna de Entrenador -->
+        <ng-container matColumnDef="coach">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Entrenador </th>
+          <td mat-cell *matCellDef="let appointment"> {{appointment.coachName}} </td>
+        </ng-container>
+
+        <!-- Columna de Apellido del Entrenador -->
+        <ng-container matColumnDef="coachSurname">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del Entrenador </th>
+          <td mat-cell *matCellDef="let appointment"> {{appointment.coachSurname}} </td>
+        </ng-container>
+
+        <!-- Columna de Tipo de Entrenamiento -->
+        <ng-container matColumnDef="trainingType">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo de Entrenamiento </th>
+          <td mat-cell *matCellDef="let appointment"> {{appointment.trainingTypeRecord}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 cursor-pointer" (click)="goToDetail(row)"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
     </div>
   </div>
-  
-  <!-- Mensaje de Error -->
-  <div *ngIf="errorMessage" class="w-full max-w-md p-4 mb-4 bg-red-100 text-red-500 border border-red-300 rounded-md">
-    {{ errorMessage }}
-  </div>
-  
-  <!-- Lista de Citas -->
-  <div class="mat-elevation-z8 w-full max-w-4xl">
-    <table mat-table [dataSource]="dataSource" class="mat-table" matSort>
 
-      <!-- Columna de Fecha -->
-      <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
-        <td mat-cell *matCellDef="let appointment"> {{appointment.date | date}} </td>
-      </ng-container>
-
-      <!-- Columna de Atleta -->
-      <ng-container matColumnDef="athlete">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Atleta </th>
-        <td mat-cell *matCellDef="let appointment"> {{appointment.athleteName}} </td>
-      </ng-container>
-
-      <!-- Columna de Apellido del Atleta -->
-      <ng-container matColumnDef="athleteSurname">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del Atleta </th>
-        <td mat-cell *matCellDef="let appointment"> {{appointment.athleteSurname}} </td>
-      </ng-container>
-
-      <!-- Columna de Entrenador -->
-      <ng-container matColumnDef="coach">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Entrenador </th>
-        <td mat-cell *matCellDef="let appointment"> {{appointment.coachName}} </td>
-      </ng-container>
-
-      <!-- Columna de Apellido del Entrenador -->
-      <ng-container matColumnDef="coachSurname">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del Entrenador </th>
-        <td mat-cell *matCellDef="let appointment"> {{appointment.coachSurname}} </td>
-      </ng-container>
-
-      <!-- Columna de Tipo de Entrenamiento -->
-      <ng-container matColumnDef="trainingType">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo de Entrenamiento </th>
-        <td mat-cell *matCellDef="let appointment"> {{appointment.trainingTypeRecord}} </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 cursor-pointer" (click)="goToDetail(row)"></tr>
-    </table>
-
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-  </div>
   <!-- Botón Back justo debajo de la tabla, alineado a la derecha -->
   <div class="flex justify-end mt-4 w-full max-w-4xl">
     <app-back-button></app-back-button>
