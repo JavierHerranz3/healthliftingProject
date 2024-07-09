@@ -32,26 +32,14 @@ export class CoachService {
   getCoachById(id: string): Observable<Coach> {
     return this._http.get<Coach>(`${this._apiUrl}/${id}`);
   }
-  getAppointmentsByCoachId(
-    coachId: string,
-    page: number,
-    size: number
-  ): Observable<Page<Appointment>> {
-    const params = { page: page.toString(), size: size.toString() };
+  getAppointmentsByCoachId(coachId: string): Observable<Page<Appointment>> {
     return this._http.get<Page<Appointment>>(
-      `${apiUrl}/appointments/coaches/${coachId}`,
-      { params }
+      `${apiUrl}/appointments/coaches/${coachId}`
     );
   }
-  getTrainingSheetsByCoachId(
-    coachId: string,
-    page: number,
-    size: number
-  ): Observable<Page<TrainingSheet>> {
-    const params = { page: page.toString(), size: size.toString() };
+  getTrainingSheetsByCoachId(coachId: string): Observable<Page<TrainingSheet>> {
     return this._http.get<Page<TrainingSheet>>(
-      `${apiUrl}/trainingsheets/coaches/${coachId}`,
-      { params }
+      `${apiUrl}/trainingsheets/coaches/${coachId}`
     );
   }
 

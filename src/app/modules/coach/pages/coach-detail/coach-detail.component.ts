@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,7 +25,7 @@ import { TrainingSheet } from '../../../../core/models/trainingSheet.model';
   styleUrls: ['./coach-detail.component.css'],
   providers: [DatePipe],
 })
-export class CoachDetailComponent implements OnInit {
+export class CoachDetailComponent implements OnInit, AfterViewInit {
   protected id: string = '';
   public coach?: Coach;
   protected dataSource = new MatTableDataSource<Coach>();
@@ -38,9 +44,13 @@ export class CoachDetailComponent implements OnInit {
     'trainingType',
     'observations',
   ];
+  @Input() pageLength = 0;
+  @Input() pageSize = 5;
+  @ViewChild('paginatorAppointments') paginatorAppointments!: MatPaginator;
+  @ViewChild('paginatorTrainingSheets') paginatorTrainingSheets!: MatPaginator;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild('trainingSheetsPaginator') trainingSheetsPaginator!: MatPaginator;
+  private allAppointments: Appointment[] = [];
+  private allTrainingSheets: TrainingSheet[] = [];
 
   constructor(
     private _coachService: CoachService,
@@ -55,10 +65,12 @@ export class CoachDetailComponent implements OnInit {
     this._route.params.subscribe((params) => {
       this.id = params['id'];
       this.getCoachById(this.id);
-      this.loadAllAppointments(this.id, 0, 5);
-      this.appointmentsDataSource.paginator = this.paginator;
-      this.trainingSheetsDataSource.paginator = this.trainingSheetsPaginator;
+      this.loadAllAppointments(this.id); // Load all appointments initially
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.appointmentsDataSource.paginator = this.paginatorAppointments;
   }
 
   getCoachById(id: string): void {
@@ -73,20 +85,13 @@ export class CoachDetailComponent implements OnInit {
     });
   }
 
-  loadAllAppointments(coachId: string, page: number, size: number): void {
-    this._coachService.getAppointmentsByCoachId(coachId, page, size).subscribe({
-      next: (appointmentsPage) => {
-        this.appointmentsDataSource.data = appointmentsPage.content.map(
-          (appointment: any) => ({
-            ...appointment,
-            date: this._datePipe.transform(appointment.date, 'medium') || '',
-          })
-        );
-        this.paginator.length = appointmentsPage.totalElements;
-        console.log(
-          'Appointments fetched and filtered',
-          this.appointmentsDataSource.data
-        );
+  loadAllAppointments(coachId: string): void {
+    this._coachService.getAppointmentsByCoachId(coachId).subscribe({
+      next: (response) => {
+        this.allAppointments = response.content;
+        this.pageLength = response.totalElements;
+        this.updateAppointmentsDataSource(0, this.pageSize); // Initialize with the first page of appointments
+        console.log('All appointments fetched', this.allAppointments);
       },
       error: (err) => {
         console.error('Error fetching appointments', err);
@@ -94,8 +99,21 @@ export class CoachDetailComponent implements OnInit {
     });
   }
 
+  updateAppointmentsDataSource(pageIndex: number, pageSize: number): void {
+    const startIndex = pageIndex * pageSize;
+    const endIndex = startIndex + pageSize;
+    if (startIndex < this.allAppointments.length) {
+      this.appointmentsDataSource.data = this.allAppointments.slice(
+        startIndex,
+        Math.min(endIndex, this.allAppointments.length)
+      );
+    } else {
+      this.appointmentsDataSource.data = [];
+    }
+  }
+
   onAppointmentsPageChange(event: any): void {
-    this.loadAllAppointments(this.id, event.pageIndex, event.pageSize);
+    this.updateAppointmentsDataSource(event.pageIndex, event.pageSize);
   }
 
   toggleEdit(): void {

@@ -43,28 +43,29 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header="date"> Fecha </th>
         <td mat-cell *matCellDef="let appointment"> {{appointment.date | date}} </td>
       </ng-container>
-  
+
       <ng-container matColumnDef="athleteName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del Atleta </th>
         <td mat-cell *matCellDef="let appointment"> {{appointment.athleteName}} </td>
       </ng-container>
-  
+
       <ng-container matColumnDef="athleteSurname">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del Atleta </th>
         <td mat-cell *matCellDef="let appointment"> {{appointment.athleteSurname}} </td>
       </ng-container>
-  
+
       <ng-container matColumnDef="trainingType">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo de Entrenamiento </th>
         <td mat-cell *matCellDef="let appointment"> {{appointment.trainingTypeRecord}} </td>
       </ng-container>
-  
+
       <tr mat-header-row *matHeaderRowDef="appointmentDisplayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: appointmentDisplayedColumns;" (click)="goToAppointmentDetails(row)" class="hover:bg-gray-50 cursor-pointer"></tr>
     </table>
-    <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons></mat-paginator>
+    <mat-paginator [length]="pageLength" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onAppointmentsPageChange($event)"></mat-paginator>
   </div>
-  
+
+
   <!-- Botón Back justo debajo de la tabla, alineado a la derecha -->
   <div class="flex justify-end mt-4">
     <app-back-button></app-back-button>

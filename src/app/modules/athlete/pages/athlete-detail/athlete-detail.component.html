@@ -74,7 +74,7 @@
           <tr mat-header-row *matHeaderRowDef="appointmentDisplayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: appointmentDisplayedColumns;" (click)="goToAppointmentDetails(row)" class="hover:bg-gray-50 cursor-pointer"></tr>
         </table>
-        <mat-paginator [length]="pageLength" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onAppointmentsPageChange($event)"></mat-paginator>
+        <mat-paginator [length]="pageLengthAppointments" [pageSize]="pageSizeAppointments" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onAppointmentsPageChange($event)"></mat-paginator>
       </div>
     </div>
   </ng-container>
@@ -95,7 +95,7 @@
       <tr mat-header-row *matHeaderRowDef="trainingSheetsDisplayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: trainingSheetsDisplayedColumns;" (click)="goToTrainingSheetDetails(row)" class="hover:bg-gray-50 cursor-pointer"></tr>
     </table>
-    <mat-paginator [length]="pageLength" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onTrainingSheetsPageChange($event)"></mat-paginator>
+    <mat-paginator [length]="pageLengthTrainingSheets" [pageSize]="pageSizeTrainingSheets" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onTrainingSheetsPageChange($event)"></mat-paginator>
   </div>
 
   <div class="flex justify-end mt-4">

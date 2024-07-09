@@ -44,8 +44,10 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
     'trainingType',
     'observations',
   ];
-  @Input() pageLength = 0;
-  @Input() pageSize = 5;
+  @Input() pageLengthAppointments = 0;
+  @Input() pageSizeAppointments = 5;
+  @Input() pageLengthTrainingSheets = 0;
+  @Input() pageSizeTrainingSheets = 5;
   @ViewChild('paginatorAppointments') paginatorAppointments!: MatPaginator;
   @ViewChild('paginatorTrainingSheets') paginatorTrainingSheets!: MatPaginator;
 
@@ -91,8 +93,8 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
     this._athleteService.getAppointmentsByAthleteId(athleteId).subscribe({
       next: (response) => {
         this.allAppointments = response.content;
-        this.pageLength = response.totalElements;
-        this.updateAppointmentsDataSource(0, this.pageSize); // Initialize with the first page of appointments
+        this.pageLengthAppointments = response.totalElements;
+        this.updateAppointmentsDataSource(0, this.pageSizeAppointments); // Initialize with the first page of appointments
         console.log('All appointments fetched', this.allAppointments);
       },
       error: (err) => {
@@ -122,8 +124,8 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
     this._athleteService.getTrainingSheetsByAthleteId(athleteId).subscribe({
       next: (response) => {
         this.allTrainingSheets = response.content;
-        this.pageLength = response.totalElements;
-        this.updateTrainingSheetsDataSource(0, this.pageSize); // Initialize with the first page of training sheets
+        this.pageLengthTrainingSheets = response.totalElements;
+        this.updateTrainingSheetsDataSource(0, this.pageSizeTrainingSheets); // Initialize with the first page of training sheets
         console.log('All training sheets fetched', this.allTrainingSheets);
       },
       error: (err) => {
