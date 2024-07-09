@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './appointment-list.component.html',
   styleUrls: ['./appointment-list.component.css'],
 })
-export class AppointmentListComponent implements OnInit, AfterViewInit {
+export class AppointmentListComponent implements OnInit {
   displayedColumns: string[] = [
     'date',
     'athlete',
@@ -31,6 +31,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
   trainingTypeControl = new FormControl('');
   searchTypeControl = new FormControl('');
   documentControl = new FormControl('');
+  appointments: Appointment[] = [];
   errorMessage: string | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -42,30 +43,28 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadAppointments();
-    this.trainingTypeControl.valueChanges.subscribe(() => this.applyFilter());
-  }
-
-  ngAfterViewInit(): void {
+    this.getAppointments(0, 5);
     this.dataSource.paginator = this.paginator;
+    this.trainingTypeControl.valueChanges.subscribe(() => this.applyFilter());
     this.dataSource.sort = this.sort;
   }
 
-  loadAppointments(): void {
-    this.appointmentService.getAppointments().subscribe(
-      (appointments: any) => {
-        console.log('Fetched appointments:', appointments);
-        this.dataSource.data = appointments.content.map(
-          (appointment: Appointment) => {
-            console.log('Appointment:', appointment);
-            return appointment;
+  getAppointments(page: number, size: number): void {
+    this.appointmentService.getAppointments(page, size).subscribe({
+      next: (value) => {
+        if (value && value.content) {
+          this.dataSource.data = value.content;
+          if (this.paginator) {
+            this.paginator.length = value.totalElements;
           }
-        );
+        } else {
+          console.error('Invalid response structure', value);
+        }
       },
-      (error) => {
-        console.error('Error fetching appointments:', error);
-      }
-    );
+      error: (err) => {
+        console.error('Error fetching appointments', err);
+      },
+    });
   }
 
   applyFilter(): void {
@@ -120,7 +119,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
                 this.errorMessage = null; // Clear error message
               } else {
                 this.showErrorMessage();
-                this.loadAppointments();
+                this.getAppointments(0, 5);
               }
             },
             (error) => {
@@ -129,7 +128,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
                 error
               );
               this.showErrorMessage();
-              this.loadAppointments();
+              this.getAppointments(0, 5);
             }
           );
       } else if (searchType === 'athlete') {
@@ -150,7 +149,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
                 this.errorMessage = null; // Clear error message
               } else {
                 this.showErrorMessage();
-                this.loadAppointments();
+                this.getAppointments(0, 5);
               }
             },
             (error) => {
@@ -159,11 +158,14 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
                 error
               );
               this.showErrorMessage();
-              this.loadAppointments();
+              this.getAppointments(0, 5);
             }
           );
       }
     }
+  }
+  public onPageChange(event: any): void {
+    this.getAppointments(event.pageIndex, event.pageSize);
   }
 
   showErrorMessage(): void {

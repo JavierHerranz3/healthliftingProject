@@ -20,9 +20,9 @@ export class AppointmentService {
     private coachService: CoachService
   ) {}
 
-  getAppointments(): Observable<Appointment[]> {
-    console.log('Fetching appointments from API:', this._apiUrl);
-    return this.http.get<Appointment[]>(this._apiUrl);
+  getAppointments(page: number, size: number): Observable<Page<Appointment>> {
+    const params = { page: page.toString(), size: size.toString() };
+    return this.http.get<Page<Appointment>>(this._apiUrl, { params });
   }
   getAppointmentById(id: string): Observable<Appointment> {
     return this.http.get<Appointment>(`${this._apiUrl}/${id}`);

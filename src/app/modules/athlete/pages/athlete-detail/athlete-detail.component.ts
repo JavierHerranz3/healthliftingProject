@@ -1,4 +1,11 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  input,
+  Input,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,6 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { TrainingSheet } from '../../../../core/models/trainingSheet.model';
+import { MatSort } from '@angular/material/sort';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -36,32 +44,35 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
     'trainingType',
     'observations',
   ];
+  @Input() pageLength = 0;
+  @Input() pageSize = 5;
+  @ViewChild('paginatorAppointments') paginatorAppointments!: MatPaginator;
+  @ViewChild('paginatorTrainingSheets') paginatorTrainingSheets!: MatPaginator;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatPaginator) trainingSheetsPaginator!: MatPaginator;
+  private allAppointments: Appointment[] = [];
+  private allTrainingSheets: TrainingSheet[] = [];
 
   constructor(
     private _athleteService: AthleteService,
     private _route: ActivatedRoute,
     private _routerNav: Router,
     private _snackBar: MatSnackBar,
-    public dialog: MatDialog,
-    private _datePipe: DatePipe
+    private _datePipe: DatePipe,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this._route.params.subscribe((params) => {
       this.id = params['id'];
       this.getAthleteById(this.id);
-      this.loadAllAppointments(this.id, 0, 10);
-      this.loadAllTrainingSheets(this.id, 0, 10);
+      this.loadAllAppointments(this.id); // Load all appointments initially
+      this.loadAllTrainingSheets(this.id); // Default page size for training sheets
     });
   }
 
   ngAfterViewInit(): void {
-    // Asigna el paginador a la fuente de datos después de que la vista se haya inicializado
-    this.appointmentsDataSource.paginator = this.paginator;
-    this.trainingSheetsDataSource.paginator = this.trainingSheetsPaginator;
+    this.appointmentsDataSource.paginator = this.paginatorAppointments;
+    this.trainingSheetsDataSource.paginator = this.paginatorTrainingSheets;
   }
 
   getAthleteById(id: string): void {
@@ -76,65 +87,65 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
     });
   }
 
-  loadAllAppointments(athleteId: string, page: number, size: number): void {
-    this._athleteService
-      .getAppointmentsByAthleteId(athleteId, page, size)
-      .subscribe({
-        next: (appointmentsPage) => {
-          this.appointmentsDataSource.data = appointmentsPage.content.map(
-            (appointment: any) => ({
-              ...appointment,
-              date: this._datePipe.transform(appointment.date, 'medium') || '',
-            })
-          );
-          this.paginator.length = appointmentsPage.totalElements;
-          console.log(
-            'Appointments fetched and filtered',
-            this.appointmentsDataSource.data
-          );
-        },
-        error: (err) => {
-          console.error('Error fetching appointments', err);
-        },
-      });
+  loadAllAppointments(athleteId: string): void {
+    this._athleteService.getAppointmentsByAthleteId(athleteId).subscribe({
+      next: (response) => {
+        this.allAppointments = response.content;
+        this.pageLength = response.totalElements;
+        this.updateAppointmentsDataSource(0, this.pageSize); // Initialize with the first page of appointments
+        console.log('All appointments fetched', this.allAppointments);
+      },
+      error: (err) => {
+        console.error('Error fetching appointments', err);
+      },
+    });
   }
 
-  loadAllTrainingSheets(athleteId: string, page: number, size: number): void {
-    this._athleteService
-      .getTrainingSheetsByAthleteId(athleteId, page, size)
-      .subscribe({
-        next: (trainingSheetsPage) => {
-          console.log('Training Sheets Page:', trainingSheetsPage);
-          this.trainingSheetsDataSource.data = trainingSheetsPage.content.map(
-            (trainingSheet: any) => ({
-              ...trainingSheet,
-              date:
-                this._datePipe.transform(trainingSheet.date, 'medium') || '',
-            })
-          );
-          this.trainingSheetsPaginator.length =
-            trainingSheetsPage.totalElements;
-          console.log(
-            'Training sheets fetched and filtered',
-            this.trainingSheetsDataSource.data
-          );
-        },
-        error: (err) => {
-          console.error('Error fetching training sheets', err);
-        },
-      });
+  updateAppointmentsDataSource(pageIndex: number, pageSize: number): void {
+    const startIndex = pageIndex * pageSize;
+    const endIndex = startIndex + pageSize;
+    if (startIndex < this.allAppointments.length) {
+      this.appointmentsDataSource.data = this.allAppointments.slice(
+        startIndex,
+        Math.min(endIndex, this.allAppointments.length)
+      );
+    } else {
+      this.appointmentsDataSource.data = [];
+    }
   }
 
   onAppointmentsPageChange(event: any): void {
-    const pageIndex = event.pageIndex;
-    const pageSize = event.pageSize;
-    this.loadAllAppointments(this.id, pageIndex, pageSize);
+    this.updateAppointmentsDataSource(event.pageIndex, event.pageSize);
+  }
+
+  loadAllTrainingSheets(athleteId: string): void {
+    this._athleteService.getTrainingSheetsByAthleteId(athleteId).subscribe({
+      next: (response) => {
+        this.allTrainingSheets = response.content;
+        this.pageLength = response.totalElements;
+        this.updateTrainingSheetsDataSource(0, this.pageSize); // Initialize with the first page of training sheets
+        console.log('All training sheets fetched', this.allTrainingSheets);
+      },
+      error: (err) => {
+        console.error('Error fetching training sheets', err);
+      },
+    });
+  }
+  updateTrainingSheetsDataSource(pageIndex: number, pageSize: number): void {
+    const startIndex = pageIndex * pageSize;
+    const endIndex = startIndex + pageSize;
+    if (startIndex < this.allTrainingSheets.length) {
+      this.trainingSheetsDataSource.data = this.allTrainingSheets.slice(
+        startIndex,
+        Math.min(endIndex, this.allTrainingSheets.length)
+      );
+    } else {
+      this.trainingSheetsDataSource.data = [];
+    }
   }
 
   onTrainingSheetsPageChange(event: any): void {
-    const pageIndex = event.pageIndex;
-    const pageSize = event.pageSize;
-    this.loadAllTrainingSheets(this.id, pageIndex, pageSize);
+    this.updateTrainingSheetsDataSource(event.pageIndex, event.pageSize);
   }
 
   toggleEdit(): void {
@@ -191,11 +202,13 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
       this._routerNav.navigate([`/appointments/list/${athlete.id}`]);
     }
   }
+
   goToTrainingSheetDetails(trainingSheet: TrainingSheet): void {
     if (trainingSheet && trainingSheet.id) {
       this._routerNav.navigate([`/training-sheets/detail/${trainingSheet.id}`]);
     }
   }
+
   goToAppointmentDetails(appointment: Appointment): void {
     if (appointment && appointment.id) {
       this._routerNav.navigate([`/appointments/detail/${appointment.id}`]);

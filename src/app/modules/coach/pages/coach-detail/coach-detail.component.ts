@@ -19,7 +19,7 @@ import { TrainingSheet } from '../../../../core/models/trainingSheet.model';
   styleUrls: ['./coach-detail.component.css'],
   providers: [DatePipe],
 })
-export class CoachDetailComponent implements OnInit, AfterViewInit {
+export class CoachDetailComponent implements OnInit {
   protected id: string = '';
   public coach?: Coach;
   protected dataSource = new MatTableDataSource<Coach>();
@@ -55,15 +55,10 @@ export class CoachDetailComponent implements OnInit, AfterViewInit {
     this._route.params.subscribe((params) => {
       this.id = params['id'];
       this.getCoachById(this.id);
-      this.loadAllAppointments(this.id, 0, 10);
-      this.loadAllTrainingSheets(this.id, 0, 5);
+      this.loadAllAppointments(this.id, 0, 5);
+      this.appointmentsDataSource.paginator = this.paginator;
+      this.trainingSheetsDataSource.paginator = this.trainingSheetsPaginator;
     });
-  }
-
-  ngAfterViewInit(): void {
-    // Asigna el paginador a la fuente de datos después de que la vista se haya inicializado
-    this.appointmentsDataSource.paginator = this.paginator;
-    this.trainingSheetsDataSource.paginator = this.trainingSheetsPaginator;
   }
 
   getCoachById(id: string): void {
@@ -99,37 +94,8 @@ export class CoachDetailComponent implements OnInit, AfterViewInit {
     });
   }
 
-  loadAllTrainingSheets(coachId: string, page: number, size: number): void {
-    this._coachService
-      .getTrainingSheetsByCoachId(coachId, page, size)
-      .subscribe({
-        next: (trainingSheetsPage) => {
-          this.trainingSheetsDataSource.data = trainingSheetsPage.content.map(
-            (trainingSheet: any) => ({
-              ...trainingSheet,
-              date:
-                this._datePipe.transform(trainingSheet.date, 'medium') || '',
-            })
-          );
-          this.trainingSheetsPaginator.length =
-            trainingSheetsPage.totalElements;
-        },
-        error: (err) => {
-          console.error('Error fetching training sheets', err);
-        },
-      });
-  }
-
   onAppointmentsPageChange(event: any): void {
-    const pageIndex = event.pageIndex;
-    const pageSize = event.pageSize;
-    this.loadAllAppointments(this.id, pageIndex, pageSize);
-  }
-
-  onTrainingSheetsPageChange(event: any): void {
-    const pageIndex = event.pageIndex;
-    const pageSize = event.pageSize;
-    this.loadAllTrainingSheets(this.id, pageIndex, pageSize);
+    this.loadAllAppointments(this.id, event.pageIndex, event.pageSize);
   }
 
   toggleEdit(): void {

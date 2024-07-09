@@ -37,27 +37,17 @@ export class AthleteService {
       `${this._apiUrl}/appointments/${appointmentId}`
     );
   }
-  getAppointmentsByAthleteId(
-    athleteId: string,
-    page: number,
-    size: number
-  ): Observable<Page<Appointment>> {
-    const params = { page: page.toString(), size: size.toString() };
+  getAppointmentsByAthleteId(athleteId: string): Observable<Page<Appointment>> {
     return this._http.get<Page<Appointment>>(
-      `${apiUrl}/appointments/athletes/${athleteId}`,
-      { params }
+      `${apiUrl}/appointments/athletes/${athleteId}`
     );
   }
 
   getTrainingSheetsByAthleteId(
-    athleteId: string,
-    page: number,
-    size: number
+    athleteId: string
   ): Observable<Page<TrainingSheet>> {
-    const params = { page: page.toString(), size: size.toString() };
     return this._http.get<Page<TrainingSheet>>(
-      `${apiUrl}/trainingsheets/athletes/${athleteId}`,
-      { params }
+      `${apiUrl}/trainingsheets/athletes/${athleteId}`
     );
   }
 
