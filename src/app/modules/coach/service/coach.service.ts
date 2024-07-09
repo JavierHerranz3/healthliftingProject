@@ -37,11 +37,6 @@ export class CoachService {
       `${apiUrl}/appointments/coaches/${coachId}`
     );
   }
-  getTrainingSheetsByCoachId(coachId: string): Observable<Page<TrainingSheet>> {
-    return this._http.get<Page<TrainingSheet>>(
-      `${apiUrl}/trainingsheets/coaches/${coachId}`
-    );
-  }
 
   searchCoachesByDocument(document: string): Observable<Coach[]> {
     return this._http.get<Coach[]>(

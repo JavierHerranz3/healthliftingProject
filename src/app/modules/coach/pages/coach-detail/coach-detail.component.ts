@@ -15,9 +15,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AppointmentService } from '../../../appointment/service/appointment.service';
-import { MatSort } from '@angular/material/sort';
+
 import { DatePipe } from '@angular/common';
-import { TrainingSheet } from '../../../../core/models/trainingSheet.model';
 
 @Component({
   selector: 'app-coach-detail',
@@ -39,26 +38,18 @@ export class CoachDetailComponent implements OnInit, AfterViewInit {
   ];
   protected activeAppointmentsCount = 0;
   protected isEditing = false;
-  protected trainingSheetsDataSource = new MatTableDataSource<TrainingSheet>();
-  protected trainingSheetsDisplayedColumns: string[] = [
-    'trainingType',
-    'observations',
-  ];
-  @Input() pageLength = 0;
-  @Input() pageSize = 5;
+  @Input() pageLengthAppointments = 0;
+  @Input() pageSizeAppointments = 5;
   @ViewChild('paginatorAppointments') paginatorAppointments!: MatPaginator;
-  @ViewChild('paginatorTrainingSheets') paginatorTrainingSheets!: MatPaginator;
 
   private allAppointments: Appointment[] = [];
-  private allTrainingSheets: TrainingSheet[] = [];
 
   constructor(
     private _coachService: CoachService,
     private _route: ActivatedRoute,
     private _routerNav: Router,
     private _snackBar: MatSnackBar,
-    public dialog: MatDialog,
-    private _datePipe: DatePipe
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +68,6 @@ export class CoachDetailComponent implements OnInit, AfterViewInit {
     this._coachService.getCoachById(id).subscribe({
       next: (value) => {
         this.coach = value;
-        console.log('Coach fetched', value);
       },
       error: (err) => {
         console.error('Error fetching coach', err);
@@ -89,9 +79,8 @@ export class CoachDetailComponent implements OnInit, AfterViewInit {
     this._coachService.getAppointmentsByCoachId(coachId).subscribe({
       next: (response) => {
         this.allAppointments = response.content;
-        this.pageLength = response.totalElements;
-        this.updateAppointmentsDataSource(0, this.pageSize); // Initialize with the first page of appointments
-        console.log('All appointments fetched', this.allAppointments);
+        this.pageLengthAppointments = response.totalElements;
+        this.updateAppointmentsDataSource(0, this.pageSizeAppointments); // Initialize with the first page of appointments
       },
       error: (err) => {
         console.error('Error fetching appointments', err);

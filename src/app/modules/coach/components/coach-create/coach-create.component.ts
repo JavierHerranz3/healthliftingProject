@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { CoachService } from '../../service/coach.service';
 import { Coach, DocumentType } from '../../../../core/models/coach.model';
@@ -20,8 +19,7 @@ export class CoachCreateComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _coachService: CoachService,
-    private _router: Router,
-    private _snackBar: MatSnackBar
+    private _router: Router
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +55,6 @@ export class CoachCreateComponent implements OnInit {
     this._coachService.createCoach(newCoach).subscribe({
       next: (createdCoach: Coach) => {
         this.isLoading = false; // Ocultar el spinner
-        console.log(createdCoach);
         if (createdCoach && createdCoach.id) {
           this.inputMessage = 'Coach created';
           this._router.navigate(['/coaches/detail', createdCoach.id]); // Redirigir a la página de detalles del atleta

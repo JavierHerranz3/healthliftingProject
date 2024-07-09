@@ -111,10 +111,6 @@ export class AppointmentListComponent implements OnInit {
           .subscribe(
             (appointments: any) => {
               if (appointments.content.length > 0) {
-                console.log(
-                  'Fetched appointments by coach document:',
-                  appointments
-                );
                 this.dataSource.data = appointments.content;
                 this.errorMessage = null; // Clear error message
               } else {
@@ -141,10 +137,6 @@ export class AppointmentListComponent implements OnInit {
           .subscribe(
             (appointments: any) => {
               if (appointments.content.length > 0) {
-                console.log(
-                  'Fetched appointments by athlete document:',
-                  appointments
-                );
                 this.dataSource.data = appointments.content;
                 this.errorMessage = null; // Clear error message
               } else {

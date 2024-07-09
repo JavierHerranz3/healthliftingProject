@@ -67,7 +67,6 @@ export class TrainingSheetCreateComponent implements OnInit {
     this.appointmentService
       .getAppointmentById(appointmentId)
       .subscribe((appointment: Appointment) => {
-        console.log('Appointment Details:', appointment);
         this.coachName = `${appointment.coachName} ${appointment.coachSurname}`;
         this.athleteName = `${appointment.athleteName} ${appointment.athleteSurname}`;
         this.appointmentDate = appointment.date;
@@ -88,7 +87,6 @@ export class TrainingSheetCreateComponent implements OnInit {
     console.log('submitForm called'); // Log para verificar si la función es llamada
     if (this.trainingSheetForm.valid) {
       const formValues = this.trainingSheetForm.value;
-      console.log('Form Values:', formValues); // Log para verificar los valores del formulario
       const newTrainingSheet: TrainingSheet = {
         id: '',
         trainingTypeRecord: this.trainingTypeRecord, // Añadir el tipo de entrenamiento

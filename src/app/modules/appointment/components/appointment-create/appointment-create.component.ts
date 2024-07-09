@@ -65,7 +65,6 @@ export class AppointmentCreateComponent implements OnInit {
     this._coachService.getCoaches(0, 20).subscribe({
       next: (response) => {
         this.coaches = response.content;
-        console.log('Coaches loaded:', this.coaches);
       },
       error: (error) => console.error('Error fetching coaches:', error),
     });
@@ -75,7 +74,6 @@ export class AppointmentCreateComponent implements OnInit {
     this._athleteService.getAthletes(0, 20).subscribe({
       next: (response) => {
         this.athletes = response.content;
-        console.log('Athletes loaded:', this.athletes);
       },
       error: (error) => console.error('Error fetching athletes:', error),
     });
@@ -90,7 +88,6 @@ export class AppointmentCreateComponent implements OnInit {
         athleteSurname: selectedAthlete.personalInformation.surname,
         athleteDocument: selectedAthlete.personalInformation.document,
       });
-      console.log('Selected athlete:', selectedAthlete);
     }
   }
 
@@ -104,7 +101,6 @@ export class AppointmentCreateComponent implements OnInit {
         coachSurname: selectedCoach.personalInformation.surname,
         coachDocument: selectedCoach.personalInformation.document,
       });
-      console.log('Selected coach:', selectedCoach);
     } else {
       console.log('No coach found for the selected value:', event.value);
     }
@@ -113,7 +109,6 @@ export class AppointmentCreateComponent implements OnInit {
   submitForm() {
     if (this.appointmentForm.valid) {
       const formValues = this.appointmentForm.getRawValue(); // Use getRawValue() to include disabled fields
-      console.log('Form Values:', formValues);
 
       // Combinar la fecha y la hora en un solo objeto ISO string con formato adecuado
       const combinedDateTime = moment(formValues.date)

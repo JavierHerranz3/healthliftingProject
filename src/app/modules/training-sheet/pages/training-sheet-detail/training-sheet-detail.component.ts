@@ -47,7 +47,6 @@ export class TrainingSheetDetailComponent implements OnInit {
     this.trainingSheetService.getTrainingSheetById(id).subscribe({
       next: (value) => {
         this.trainingSheet = value;
-        console.log('Training sheet fetched', value);
         this.getCoachName(value.coachId);
         this.getAthleteName(value.athleteId);
         this.getAppointmentDate(value.appointmentId);

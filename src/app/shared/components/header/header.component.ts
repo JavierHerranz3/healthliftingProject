@@ -12,8 +12,5 @@ import { RouterLink } from '@angular/router';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit {
-  ngOnInit(): void {
-    // Implementación del método ngOnInit
-    console.log('HeaderComponent initialized');
-  }
+  ngOnInit(): void {}
 }

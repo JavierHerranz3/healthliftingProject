@@ -16,7 +16,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { TrainingSheet } from '../../../../core/models/trainingSheet.model';
-import { MatSort } from '@angular/material/sort';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -59,7 +58,6 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
     private _route: ActivatedRoute,
     private _routerNav: Router,
     private _snackBar: MatSnackBar,
-    private _datePipe: DatePipe,
     public dialog: MatDialog
   ) {}
 
@@ -81,7 +79,6 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
     this._athleteService.getAthleteById(id).subscribe({
       next: (value) => {
         this.athlete = value;
-        console.log('Athlete fetched', value);
       },
       error: (err) => {
         console.error('Error fetching athlete', err);
@@ -95,7 +92,6 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
         this.allAppointments = response.content;
         this.pageLengthAppointments = response.totalElements;
         this.updateAppointmentsDataSource(0, this.pageSizeAppointments); // Initialize with the first page of appointments
-        console.log('All appointments fetched', this.allAppointments);
       },
       error: (err) => {
         console.error('Error fetching appointments', err);
@@ -126,7 +122,6 @@ export class AthleteDetailComponent implements OnInit, AfterViewInit {
         this.allTrainingSheets = response.content;
         this.pageLengthTrainingSheets = response.totalElements;
         this.updateTrainingSheetsDataSource(0, this.pageSizeTrainingSheets); // Initialize with the first page of training sheets
-        console.log('All training sheets fetched', this.allTrainingSheets);
       },
       error: (err) => {
         console.error('Error fetching training sheets', err);
